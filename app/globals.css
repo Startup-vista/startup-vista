@@ -1,0 +1,133 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+:root {
+  /* Color Palette */
+  --primary-500: #1C4BC6;
+  --primary-300: #243799;
+  --primary-200: #F0F7FC;
+  --primary-100: #CEE0F6;
+  
+  --secondary-200: #C3C3C3;
+  --secondary-300: #929292;
+  
+  --white: #FFFFFF;
+  --text-900: #0D0D0D;
+  --text-800: #2E2E2E;
+  --text-600: #666666;
+  
+  /* Font Families */
+  --font-roboto: 'Roboto', sans-serif;
+  
+  /* Font Weights */
+  --font-normal: 400;
+  --font-bold: 700;
+  
+  /* Font Sizes */
+  --text-xs: 0.75rem;  /* 12px */
+  --text-sm: 0.875rem; /* 14px */
+  --text-base: 1rem;   /* 16px */
+  --text-lg: 1.125rem; /* 18px */
+  --text-xl: 1.5rem;   /* 24px */
+  --text-2xl: 2rem;
+  --text-3xl: 2.5rem;
+}
+
+/* Base Styles */
+html {
+  font-family: var(--font-roboto);
+}
+
+body {
+  color: var(--text-800);
+  background-color: var(--secondary-100);
+}
+
+/* Utility Classes */
+.font-roboto {
+  font-family: var(--font-roboto);
+}
+
+.font-normal {
+  font-weight: var(--font-normal);
+}
+
+.font-bold {
+  font-weight: var(--font-bold);
+}
+
+.text-xs {
+  font-size: var(--text-xs);
+}
+
+.text-sm {
+  font-size: var(--text-sm);
+}
+
+.text-base {
+  font-size: var(--text-base);
+}
+
+.text-lg {
+  font-size: var(--text-lg);
+}
+
+.text-xl {
+  font-size: var(--text-xl);
+}
+
+.text-2xl {
+  font-size: var(--text-2xl);
+}
+
+.text-3xl {
+  font-size: var(--text-3xl);
+}
+
+/* Color Utilities */
+.bg-primary-500 {
+  background-color: var(--primary-500);
+}
+
+.bg-primary-100 {
+  background-color: var(--primary-100);
+}
+
+.bg-primary-200 {
+  background-color: var(--primary-200);
+}
+
+.bg-primary-300 {
+  background-color: var(--primary-300);
+}
+
+
+.text-primary-500 {
+  color: var(--primary-500);
+}
+
+.text-primary-100 {
+  color: var(--primary-100);
+}
+
+.text-primary-200 {
+  color: var(--primary-200);
+}
+
+.text-primary-300 {
+  color: var(--primary-300);
+}
+
+
+.text-900 {
+  color: var(--text-900);
+}
+
+.text-800 {
+  color: var(--text-800);
+}
+
+.text-600 {
+  color: var(--text-600);
+}
+
