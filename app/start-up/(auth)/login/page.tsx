@@ -12,16 +12,16 @@ export default function LoginPage() {
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
+          <div className="w-full max-w-md">
             <LoginForm />
           </div>
         </div>
       </div>
       <div className="bg-muted relative hidden lg:block">
         <img
-          src="/placeholder.svg"
+          src="/images/login.png"
           alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+          className="absolute inset-0 h-full w-full object-cover"
         />
       </div>
     </div>

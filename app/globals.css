@@ -131,3 +131,243 @@ body {
   color: var(--text-600);
 }
 
+/* Remove scrollbar */
+.remove-scrollbar::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+  border-radius: 0px;
+}
+
+.remove-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.remove-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 0px;
+}
+
+.remove-scrollbar::-webkit-scrollbar-thumb:hover {
+  /* background: #1e2238; */
+  background: transparent;
+}
+
+.header {
+  @apply text-2xl leading-9 font-bold md:leading-10 md:text-4xl;
+}
+
+.sub-header {
+  @apply text-lg leading-6 font-bold md:text-xl md:leading-7;
+}
+
+.container {
+  @apply relative flex-1 overflow-y-auto px-[5%];
+}
+
+.sub-container {
+  @apply mx-auto flex size-full flex-col py-10;
+}
+
+.side-img {
+  @apply hidden h-full object-cover md:block;
+}
+
+.copyright {
+  @apply text-sm leading-4.5 font-normal justify-items-end text-center xl:text-left;
+}
+
+/* =====  SHADCN OVERRIDES */
+.shad-primary-btn {
+  @apply bg-[#1C4BC6] text-white ;
+}
+
+.shad-danger-btn {
+  @apply bg-red-700 text-white ;
+}
+
+.shad-gray-btn {
+  @apply border border-[#2E2E2E] cursor-pointer bg-white text-white ;
+}
+
+.shad-input-label {
+  @apply text-sm leading-4.5 font-medium text-[#2E2E2E] ;
+}
+
+.shad-input {
+  @apply bg-white placeholder:text-[#666666] border-[#2E2E2E] my-auto h-11 focus-visible:ring-0 focus-visible:ring-offset-0 ;
+}
+
+.shad-input-icon {
+  @apply bg-white placeholder:text-[#666666] border-[#2E2E2E] h-11 focus-visible:ring-0 focus-visible:ring-offset-0 ;
+}
+
+.shad-textArea {
+  @apply bg-white placeholder:text-[#666666] border-[#2E2E2E] focus-visible:ring-0 focus-visible:ring-offset-0 ;
+}
+
+.shad-combobox-item {
+  @apply data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 ;
+}
+
+.shad-combobox-trigger {
+  @apply h-11 ;
+}
+
+.shad-select-trigger {
+  @apply bg-white w-full  placeholder:text-[#666666] border-0 h-11 focus:ring-0 focus:ring-offset-0 ;
+}
+
+.shad-select-content {
+  @apply bg-white w-full ;
+}
+
+.shad-dialog {
+  @apply bg-white border-[#2E2E2E] ;
+}
+
+.shad-dialog button {
+  @apply focus:ring-0 focus:ring-offset-0 focus-visible:border-none focus-visible:outline-none focus-visible:ring-transparent focus-visible:ring-offset-0 ;
+}
+
+.shad-error {
+  @apply text-red-400 ;
+}
+
+.shad-table {
+  @apply rounded-lg overflow-hidden ;
+}
+
+.shad-table-row-header {
+  @apply border-b border-[#2E2E2E] text-[#2E2E2E] hover:bg-transparent  ;
+}
+
+.shad-table-row {
+  @apply border-b border-[#2E2E2E] text-[#2E2E2E];
+}
+
+.shad-otp {
+  @apply w-full flex justify-between ;
+}
+
+.shad-otp-slot {
+  @apply text-4xl leading-10 font-bold justify-center flex border border-[#2E2E2E] rounded-lg size-16 gap-4 ;
+}
+
+.shad-alert-dialog {
+  @apply space-y-5 bg-white border-[#2E2E2E] outline-none ;
+}
+
+.shad-sheet-content button {
+  @apply top-2 focus:ring-0 focus:ring-offset-0 focus-visible:border-none focus-visible:outline-none focus-visible:ring-transparent focus-visible:ring-offset-0 ;
+}
+
+/* =====  REACT PHONE NUMBER INPUT OVERRIDES */
+.input-phone {
+  @apply mt-2 h-11 rounded-md px-3 text-sm border bg-white placeholder:text-[#666666] border-[#2E2E2E] ;
+}
+
+/* =====  REACT DATE PICKER OVERRIDES */
+.date-picker {
+  @apply overflow-hidden border-transparent w-full placeholder:text-[#666666]  h-11 text-sm leading-4.5 font-medium rounded-md px-3 outline-none ;
+}
+
+.flex-center {
+  @apply flex items-center justify-center;
+}
+
+.flex-between {
+  @apply flex items-center justify-between;
+}
+
+.radio-group {
+  @apply flex h-full flex-1 items-center gap-2 rounded-md border border-dashed border-[#2E2E2E] bg-white p-3;
+}
+
+.react-datepicker-wrapper.date-picker {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.react-datepicker,
+.react-datepicker__time,
+.react-datepicker__header,
+.react-datepicker__current-month,
+.react-datepicker__day-name,
+.react-datepicker__day,
+.react-datepicker-time__header {
+  background-color: white !important;
+  border-color: #2E2E2E !important;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__day-name,
+.react-datepicker-time__header {
+  color: #2E2E2E !important;
+}
+
+.react-datepicker__triangle {
+  fill: #2E2E2E !important;
+  color: #2E2E2E !important;
+  stroke: #2E2E2E !important;
+}
+
+.react-datepicker__time-list-item:hover {
+  background-color: white !important;
+}
+
+.react-datepicker__input-container input {
+  background-color: white !important;
+  width: 100%;
+  outline: none;
+}
+
+.react-datepicker__day--selected {
+  background-color: #1C4BC6 !important;
+  color: white !important;
+  border-radius: 4px;
+}
+
+.react-datepicker__time-list-item--selected {
+  background-color: #1C4BC6 !important;
+}
+
+.react-datepicker__time-container {
+  border-left: 1px solid #2E2E2E !important;
+}
+
+.react-datepicker__time-list-item {
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* =====  REACT PHONE NUMBER INPUT OVERRIDES */
+.PhoneInputInput {
+  outline: none;
+  margin-left: 4px;
+  background: white;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.PhoneInputInput::placeholder {
+  color: #2E2E2E;
+  background: white;
+}
+
+.input-phone {
+  @apply mt-2 h-11 rounded-md px-3 text-sm border bg-white placeholder:text-[#2E2E2E] border-[#2E2E2E];
+}
+
+/* =====  REACT DATE PICKER OVERRIDES */
+.date-picker {
+  @apply overflow-hidden border-transparent w-full placeholder:text-[#2E2E2E] cursor-pointer h-11 text-base leading-6 font-bold rounded-md ml-5 px-3 outline-none;
+}
+
+.file-upload {
+  @apply text-xs leading-4 font-normal flex cursor-pointer  flex-col items-center justify-center gap-3 rounded-md border border-dashed border-[#2E2E2E] bg-[#F0F7FC] p-5;
+}
+
+.file-upload_label {
+  @apply flex flex-col justify-center gap-2 text-center text-[#0D0D0D];
+}

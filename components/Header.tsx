@@ -21,7 +21,7 @@ export const Header: React.FC = (props) => {
                     <Image alt="logo" src="/images/logo.png" width={200} height={100} />
                 </Link>
                 <div className="hidden md:flex">
-                    <nav className="flex items-center pr-100 gap-2 text-base font-normal">
+                    <nav className="flex items-center pr-60 gap-2 text-base font-normal">
                         {navItems.map((item) => (
                             <Button
                             asChild
