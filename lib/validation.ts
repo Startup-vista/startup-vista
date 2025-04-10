@@ -13,6 +13,14 @@ const genderOptions = Gender as [string, ...string[]];
 const fundingStageNames = FundingStage.map(stage => stage.name);
 const industryNames = Industry.map(industry => industry.name);
 
+export const UserFormValidation = z.object({
+  email: z.string().email("Invalid email address"),
+  phone: z
+      .string()
+      .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
+  password: z.string()
+});
+
 export const RegisterFormValidation = z.object({
   password: z.string()
     .min(8, "Password must be at least 8 characters")
@@ -121,6 +129,17 @@ export const RegisterFormValidation = z.object({
       message: "Only .jpg, .png, and .webp formats are supported"
     })
     .optional(),
+
+    incorporationCertificate: z.custom<File[]>()
+    .refine(files => files.length <= 1, "You can upload only one file")
+    .refine(files => !files.length || files[0].size <= 10 * 1024 * 1024, {
+      message: "Max file size is 10MB"
+    })
+    .refine(files => !files.length || [
+      'application/pdf',
+    ].includes(files[0].type), {
+      message: "Only .pdf format is supported"
+    }),
 
   privacyConsent: z.literal(true, {
     errorMap: () => ({ message: "You must accept the terms and conditions" })

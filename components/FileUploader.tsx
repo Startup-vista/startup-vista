@@ -1,32 +1,50 @@
 "use client";
 
-import React, {useCallback} from 'react'
-import {useDropzone} from 'react-dropzone'
+import React, { useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
 import Image from "next/image";
-import {convertFileToUrl} from "@/lib/utils";
+import { convertFileToUrl } from "@/lib/utils";
 
 type FileUploaderProps = {
     files: File[] | undefined,
     onChange: (files: File[]) => void,
+    accept?: Record<string, string[]>,
 }
 
-const FileUploader = ({files,onChange}: FileUploaderProps) => {
+const FileUploader = ({ files, onChange, accept }: FileUploaderProps) => {
     const onDrop = useCallback((acceptedFiles: File[]) => {
-        onChange(acceptedFiles)
-    }, [])
-    const {getRootProps, getInputProps} = useDropzone({onDrop})
+        onChange(acceptedFiles);
+    }, [onChange]);
+
+    const { getRootProps, getInputProps } = useDropzone({
+        onDrop,
+        accept,
+    });
+
+    const isImageFile = (file: File) => {
+        return file.type.startsWith('image/');
+    };
 
     return (
         <div {...getRootProps()} className="file-upload">
             <input {...getInputProps()} />
             {files && files?.length > 0 ? (
-                <Image
-                    src={convertFileToUrl(files[0])}
-                    alt="uploaded image"
-                    width={1000}
-                    height={1000}
-                    className="max-h-[400px] overflow-hidden object-cover"
-                />
+                <div className="flex flex-col items-center gap-2">
+                    {isImageFile(files[0]) ? (
+                        <Image
+                            src={convertFileToUrl(files[0])}
+                            alt="uploaded file"
+                            width={100}
+                            height={100}
+                            className="max-h-[400px] overflow-hidden object-cover"
+                        />
+                    ) : (
+                        <div className="flex items-center gap-2 p-2 rounded">
+                            <span className="text-sm font-medium">{files[0].name}</span>
+                        </div>
+                    )}
+                    <p className="text-xs text-gray-500">Click to replace or drag and drop</p>
+                </div>
             ) : (
                 <>
                     <Image
@@ -36,17 +54,14 @@ const FileUploader = ({files,onChange}: FileUploaderProps) => {
                         height={40}
                     />
                     <div className="file-upload_label">
-                        <p className="text-14-regular">
+                        <p className="text-sm leading-4.5 font-normal">
                             <span className="text-primary-500">Click to upload</span> or drag and drop
-                        </p>
-                        <p>
-                            PNG, JPEG or JPG (max. 800x400px)
                         </p>
                     </div>
                 </>
             )}
         </div>
-    )
-}
+    );
+};
 
 export default FileUploader;

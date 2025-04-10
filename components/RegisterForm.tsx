@@ -4,18 +4,19 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
-import {Form, FormControl} from "@/components/ui/form";
-import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
+import { Form, FormControl } from "@/components/ui/form";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import CustomFormField from "@/components/CustomFormField";
 import SubmitButton from "@/components/SubmitButton";
-import {useState} from "react";
-import {RegisterFormValidation} from "@/lib/validation";
-import {useRouter} from "next/navigation";
-import {FundingStage,Gender,Industry} from "@/constants";
-import {Label} from "@/components/ui/label";
-import {SelectItem} from "@/components/ui/select";
-import Image from "next/image";
+import { useState } from "react";
+import { RegisterFormValidation } from "@/lib/validation";
+import { useRouter } from "next/navigation";
+import { FundingStage, FundingType, Gender, Industry, Registered, TeamSize } from "@/constants";
+import { Label } from "@/components/ui/label";
+import { SelectItem } from "@/components/ui/select";
 import FileUploader from "@/components/FileUploader";
+import { VerificationField } from "./VerificationField";
+
 
 export enum FormFieldType {
     INPUT = "input",
@@ -42,17 +43,225 @@ const RegisterForm = () => {
 
     async function onSubmit(values: z.infer<typeof RegisterFormValidation>) {
         setIsLoading(true);
-        
+
         setIsLoading(false);
     }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12 flex-1 bg-white p-5 rounded-xl">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12 flex-1 p-5 rounded-xl">
                 <section className="space-y-4">
-                    <h1 className="header">Create Your Account</h1>
-                    <p className="text-text-800 text-lg">Please provide the required details</p>
+                    <h1 className="header">Apply to create profile</h1>
+                    <p className="text-text-800 text-lg">Let us know more about your brand</p>
                 </section>
+
+                <section className="space-y-4">
+                    <div className="mb-9 space-y-1">
+                        <h2 className="sub-header">Company Information</h2>
+                    </div>
+                </section>
+
+                <div className="flex flex-col gap-6 xl:flex-row">
+                    <VerificationField
+                        control={form.control}
+                        name="companyEmail"
+                        label="Email"
+                        placeholder="Enter your email"
+                        iconSrc="/icons/email.svg"
+                        iconAlt="email"
+                    />
+                </div>
+
+                <div className="flex flex-col gap-6 xl:flex-row">
+                    <CustomFormField
+                        fieldType={FormFieldType.PWD}
+                        control={form.control}
+                        name="password"
+                        label="Password"
+                        placeholder="Enter your password"
+                        iconSrc="/icons/lock.svg"
+                        iconAlt="lock"
+                    />
+                    <CustomFormField
+                        fieldType={FormFieldType.INPUT}
+                        control={form.control}
+                        name="confirmPassword"
+                        label="Confirm Password"
+                        placeholder="Confirm your password"
+                        iconSrc="/icons/lock.svg"
+                        iconAlt="lock"
+                    />
+                </div>
+                <div className="flex flex-col gap-6 xl:flex-row">
+                    <CustomFormField
+                        fieldType={FormFieldType.SKELETON}
+                        control={form.control}
+                        name="companyLogo"
+                        label="Company Logo"
+                        renderSkeleton={(field) => (
+                            <FormControl>
+                                <FileUploader files={field.value} onChange={field.onChange} accept={{ 'image/*': ['.png', '.jpg', '.jpeg', '.webp'] }} />
+                            </FormControl>
+                        )}
+                    />
+
+                    <CustomFormField
+                        fieldType={FormFieldType.SELECT}
+                        control={form.control}
+                        name="registered"
+                        label="Is your company registered ?"
+                        placeholder="Select your choice"
+                    >
+                        {Registered.map((choice) => (
+                            <SelectItem key={choice} value={choice}>
+                                <div className="flex cursor-pointer items-center gap-2">
+                                    <p>{choice}</p>
+                                </div>
+                            </SelectItem>
+                        ))}
+                    </CustomFormField>
+                </div>
+                {form.watch("registered") === "Yes" && (
+                    <div className="flex flex-col gap-6  xl:flex-row">
+                        <CustomFormField
+                            fieldType={FormFieldType.INPUT}
+                            control={form.control}
+                            name="companyName"
+                            label="Company/LLP Name"
+                            placeholder="Enter your Company/LLP name"
+                        />
+                        <CustomFormField
+                            fieldType={FormFieldType.SKELETON}
+                            control={form.control}
+                            name="incorporationCertificate"
+                            label="Certificate of incorporation"
+                            renderSkeleton={(field) => (
+                                <FormControl>
+                                    <FileUploader files={field.value} onChange={field.onChange} accept={{ 'application/pdf': ['.pdf'] }} />
+                                </FormControl>
+                            )}
+                        />
+                    </div>
+                )}
+                <div className="flex flex-col gap-6 xl:flex-row">
+                    <CustomFormField
+                        fieldType={FormFieldType.INPUT}
+                        control={form.control}
+                        name="brandName"
+                        label="Brand Name"
+                        placeholder="Enter your brand name"
+                    />
+                    <CustomFormField
+                        fieldType={FormFieldType.DATE_PICKER}
+                        control={form.control}
+                        name="establishedDate"
+                        label="Established Date"
+                    />
+                    <CustomFormField
+                        fieldType={FormFieldType.SELECT}
+                        control={form.control}
+                        name="industry"
+                        label="Industry"
+                        placeholder="Select your industry"
+                        iconSrc="/icons/box.svg"
+                        iconAlt="industry"
+                    >
+                        {Industry.map((industry) => (
+                            <SelectItem key={industry.name} value={industry.name}>
+                                <div className="flex cursor-pointer items-center gap-2">
+                                    <p>{industry.name}</p>
+                                </div>
+                            </SelectItem>
+                        ))}
+                    </CustomFormField>
+                </div>
+
+                <div className="flex flex-col gap-6 xl:flex-row">
+                    <CustomFormField
+                        fieldType={FormFieldType.SELECT}
+                        control={form.control}
+                        name="teamSize"
+                        label="Team Size"
+                        placeholder="Select your team size"
+                    >
+                        {TeamSize.map((size) => (
+                            <SelectItem key={size} value={size}>
+                                <div className="flex cursor-pointer items-center gap-2">
+                                    <p>{size}</p>
+                                </div>
+                            </SelectItem>
+                        ))}
+                    </CustomFormField>
+                    <CustomFormField
+                        fieldType={FormFieldType.SELECT}
+                        control={form.control}
+                        name="fundingStage"
+                        label="Funding Stage"
+                        placeholder="Select your funding stage"
+                        iconSrc="/icons/rupee.svg"
+                        iconAlt="rupee"
+                    >
+                        {FundingStage.map((industry) => (
+                            <SelectItem key={industry.name} value={industry.name}>
+                                <div className="flex cursor-pointer items-center gap-2">
+                                    <p>{industry.name}</p>
+                                </div>
+                            </SelectItem>
+                        ))}
+                    </CustomFormField>
+                </div>
+
+                {form.watch("fundingStage") === "Funding" && (
+                    <>
+                        <div className="flex flex-col gap-6 xl:flex-row">
+                            <CustomFormField
+                                fieldType={FormFieldType.INPUT}
+                                control={form.control}
+                                name="fundingName"
+                                label="Venture/Investor name"
+                                placeholder="Enter your venture/investor name"
+                            />
+                            <CustomFormField
+                                fieldType={FormFieldType.SELECT}
+                                control={form.control}
+                                name="fundingType"
+                                label="Funding Type"
+                                placeholder="Select your funding type"
+                            >
+                                {FundingType.map((type) => (
+                                    <SelectItem key={type} value={type}>
+                                        <div className="flex cursor-pointer items-center gap-2">
+                                            <p>{type}</p>
+                                        </div>
+                                    </SelectItem>
+                                ))}
+                            </CustomFormField>
+                        </div>
+                        <div className="flex flex-col gap-6 xl:flex-row">
+                            <CustomFormField
+                                fieldType={FormFieldType.DATE_PICKER}
+                                control={form.control}
+                                name="fundingDate"
+                                label="Funding Date"
+                            />
+                            <CustomFormField
+                                fieldType={FormFieldType.INPUT}
+                                control={form.control}
+                                name="fundingAmount"
+                                label="Funding Amount"
+                                placeholder="Enter your funding amount"
+                            />
+                        </div>
+                    </>
+                )}
+
+                <CustomFormField
+                    fieldType={FormFieldType.TEXTAREA}
+                    control={form.control}
+                    name="aboutCompany"
+                    label="About Company"
+                    placeholder="Let us know about your company (max. 600 characters)"
+                />
 
                 <section className="space-y-4">
                     <div className="mb-9 space-y-1">
@@ -64,29 +273,25 @@ const RegisterForm = () => {
                     <CustomFormField
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
-                        name="email"
+                        name="personalEmail"
                         label="Email"
                         placeholder="Enter your email"
                         iconSrc="/icons/email.svg"
                         iconAlt="email"
                     />
-
+                    <CustomFormField
+                        fieldType={FormFieldType.INPUT}
+                        control={form.control}
+                        name="designation"
+                        label="Designation"
+                        placeholder="Enter your designation"
+                    />
                     <CustomFormField
                         fieldType={FormFieldType.PHONE_INPUT}
                         control={form.control}
-                        name="phone"
+                        name="personalPhone"
                         label="Phone Number"
                         placeholder="Enter your phone number"
-                    />
-
-                    <CustomFormField
-                    fieldType={FormFieldType.PWD}
-                    control={form.control}
-                    name="password"
-                    label="Password"
-                    placeholder="Enter your password"
-                    iconSrc="/icons/lock.svg"
-                    iconAlt="user"
                     />
                 </div>
 
@@ -109,8 +314,8 @@ const RegisterForm = () => {
                                     onValueChange={field.onChange}
                                     defaultValue={field.value}
                                 >
-                                    {Gender.map((option,i) => (
-                                        <div key={option+i} className="radio-group">
+                                    {Gender.map((option, i) => (
+                                        <div key={option + i} className="radio-group">
                                             <RadioGroupItem value={option} id={option} />
                                             <Label htmlFor={option} className="cursor-pointer">{option}</Label>
                                         </div>
@@ -121,111 +326,7 @@ const RegisterForm = () => {
                     />
                 </div>
 
-                <section className="space-y-4">
-                    <div className="mb-9 space-y-1">
-                        <h2 className="sub-header">Company Information</h2>
-                    </div>
-                </section>
 
-                <CustomFormField
-                    fieldType={FormFieldType.SKELETON}
-                    control={form.control}
-                    name="companyLogo"
-                    label="Company Logo"
-                    renderSkeleton={(field) => (
-                        <FormControl>
-                            <FileUploader files={field.value} onChange={field.onChange}/>
-                        </FormControl>
-                    )}
-                />
-
-                    <CustomFormField
-                        fieldType={FormFieldType.INPUT}
-                        control={form.control}
-                        name="companyName"
-                        label="Company Name"
-                        placeholder="Enter your company name"
-                        iconSrc="/icons/briefcase.svg"
-                        iconAlt="name"
-                    />
-
-                <div className="flex flex-col gap-6 xl:flex-row">
-                    <CustomFormField
-                        fieldType={FormFieldType.DATE_PICKER}
-                        control={form.control}
-                        name="foundingDate"
-                        label="Founding Date"
-                    />
-                    <CustomFormField
-                    fieldType={FormFieldType.SELECT}
-                    control={form.control}
-                    name="industry"
-                    label="Industry"
-                    placeholder="Select your industry"
-                    iconSrc="/icons/box.svg"
-                    iconAlt="industry"
-                    >
-                        {Industry.map((industry) => (
-                            <SelectItem key={industry.name} value={industry.name}>
-                                <div className="flex cursor-pointer items-center gap-2">
-                                    <Image
-                                        src={industry.image}
-                                        alt={industry.name}
-                                        width={20}
-                                        height={20}
-                                        className="rounded-full border-0"
-                                    />
-                                    <p>{industry.name}</p>
-                                </div>
-                            </SelectItem>
-                        ))}
-                </CustomFormField>
-                </div>
-
-                <CustomFormField
-                    fieldType={FormFieldType.SELECT}
-                    control={form.control}
-                    name="fundingStage"
-                    label="Funding Stage"
-                    placeholder="Select your funding stage"
-                    iconSrc="/icons/dollar.svg"
-                    iconAlt="industry"
-                    >
-                        {FundingStage.map((industry) => (
-                            <SelectItem key={industry.name} value={industry.name}>
-                                <div className="flex cursor-pointer items-center gap-2">
-                                    <Image
-                                        src={industry.image}
-                                        alt={industry.name}
-                                        width={20}
-                                        height={20}
-                                        className="border-0"
-                                    />
-                                    <p>{industry.name}</p>
-                                </div>
-                            </SelectItem>
-                        ))}
-                </CustomFormField>
-
-            {form.watch("fundingStage") === "Funding" && (
-                <div className="flex flex-col gap-6 xl:flex-row">
-                    <CustomFormField
-                        fieldType={FormFieldType.DATE_PICKER}
-                        control={form.control}
-                        name="fundingDate"
-                        label="Funding Date"
-                    />
-                    <CustomFormField
-                        fieldType={FormFieldType.INPUT}
-                        control={form.control}
-                        name="fundingAmount"
-                        label="Funding Amount"
-                        placeholder="Enter your funding amount"
-                        iconSrc="/icons/rupee.svg"
-                        iconAlt="funding"
-                    />
-                </div>
-            )}
 
                 <section className="space-y-4">
                     <div className="mb-9 space-y-1">
@@ -237,11 +338,9 @@ const RegisterForm = () => {
                     <CustomFormField
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
-                        name="productUrl"
-                        label="Product URL"
-                        placeholder="Enter your product url"
-                        iconSrc="/icons/link.png"
-                        iconAlt="link"
+                        name="websiteUrl"
+                        label="Website URL"
+                        placeholder="Enter your website url"
                     />
                     <CustomFormField
                         fieldType={FormFieldType.INPUT}
@@ -249,8 +348,6 @@ const RegisterForm = () => {
                         name="androidLink"
                         label="Android App"
                         placeholder="Enter your android app link"
-                        iconSrc="/icons/android.svg"
-                        iconAlt="android"
                     />
                     <CustomFormField
                         fieldType={FormFieldType.INPUT}
@@ -258,8 +355,6 @@ const RegisterForm = () => {
                         name="iosLink"
                         label="IOS App"
                         placeholder="Enter your ios app link"
-                        iconSrc="/icons/ios.svg"
-                        iconAlt="ios"
                     />
                 </div>
 
@@ -270,8 +365,6 @@ const RegisterForm = () => {
                         name="linkedin"
                         label="LinkedIn"
                         placeholder="Enter your LinkedIn link"
-                        iconSrc="/icons/linkedin.svg"
-                        iconAlt="linkedin"
                     />
                     <CustomFormField
                         fieldType={FormFieldType.INPUT}
@@ -279,8 +372,6 @@ const RegisterForm = () => {
                         name="instagram"
                         label="Instagram"
                         placeholder="Enter your Instagram link"
-                        iconSrc="/icons/instagram.svg"
-                        iconAlt="instagram"
                     />
                 </div>
                 <div className="flex flex-col gap-6 xl:flex-row">
@@ -290,8 +381,6 @@ const RegisterForm = () => {
                         name="x"
                         label="X"
                         placeholder="Enter your X link"
-                        iconSrc="/icons/x.svg"
-                        iconAlt="x"
                     />
                     <CustomFormField
                         fieldType={FormFieldType.INPUT}
@@ -299,8 +388,6 @@ const RegisterForm = () => {
                         name="facebook"
                         label="FaceBook"
                         placeholder="Enter your FaceBook link"
-                        iconSrc="/icons/meta.svg"
-                        iconAlt="facebook"
                     />
                 </div>
 

@@ -89,6 +89,10 @@ body {
   background-color: var(--primary-500);
 }
 
+.border-secondary-200 {
+  border-color: var(--secondary-200);
+}
+
 .bg-primary-100 {
   background-color: var(--primary-100);
 }
@@ -365,9 +369,21 @@ body {
 }
 
 .file-upload {
-  @apply text-xs leading-4 font-normal flex cursor-pointer  flex-col items-center justify-center gap-3 rounded-md border border-dashed border-[#2E2E2E] bg-[#F0F7FC] p-5;
+  @apply text-xs leading-4 font-normal flex cursor-pointer  flex-col items-center justify-center gap-3 rounded-md border border-dashed border-[#2E2E2E] bg-[#F0F7FC] p-3;
 }
 
 .file-upload_label {
   @apply flex flex-col justify-center gap-2 text-center text-[#0D0D0D];
+}
+
+.file-icon-container {
+  @apply flex items-center gap-2 p-2 bg-gray-100 rounded-md;
+}
+
+.file-name {
+  @apply text-sm font-medium truncate max-w-[200px];
+}
+
+.replace-hint {
+  @apply text-xs text-gray-500 mt-2;
 }

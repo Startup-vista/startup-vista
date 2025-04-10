@@ -36,7 +36,7 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
     switch (fieldType) {
         case FormFieldType.INPUT:
             return (
-                <div className="flex rounded-md border border-[#2E2E2E] bg-white">
+                <div className="flex rounded-md border h-fit border-[#2E2E2E] bg-white">
                     {iconSrc && (
                         <Image
                             src={iconSrc}
@@ -91,7 +91,7 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
             );
         case FormFieldType.DATE_PICKER:
             return (
-                <div className="flex rounded-md border border-dark-500 bg-dark-400">
+                <div className="flex rounded-md border bg-white">
                     <Image
                         src="/icons/calendar.svg"
                         width={20}
@@ -105,7 +105,7 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
                             onChange={(date) => field.onChange(date)}
                             showTimeSelect={false}
                             dateFormat={dateFormat ?? 'dd/MM/yyyy'}
-                            wrapperClassName="date-picker w-full"
+                            wrapperClassName="date-picker bg-white w-full"
                         />
                     </FormControl>
                 </div>
@@ -114,7 +114,7 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
             return renderSkeleton ? renderSkeleton(field) : null
         case FormFieldType.SELECT:
             return (
-                <div className="flex rounded-md border border-[#2E2E2E] bg-white">
+                <div className="flex rounded-md border h-fit border-[#2E2E2E] bg-white">
                     {iconSrc && (
                         <Image
                             src={iconSrc}

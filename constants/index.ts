@@ -29,3 +29,9 @@ export const FundingStage = [
 ];
 
 export const Gender = ["Male", "Female", "Other"];
+
+export const Registered = ["Yes","No"];
+
+export const TeamSize = ["1-10","10-50","50-100","100+"];
+
+export const FundingType = ["Pre seed", "Seed", "Early Stage", "Series A", "Series B", "Series C", "Series D"];

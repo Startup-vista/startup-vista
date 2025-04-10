@@ -1,29 +1,44 @@
 
-import { LoginForm } from "@/components/login-form"
+import { LoginForm } from "@/components/LoginForm"
+import Image from "next/image"
 import Link from "next/link"
 
 export default function LoginPage() {
   return (
-    <div className="grid min-h-svh lg:grid-cols-2 bg-primary-200">
-      <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <Link href="/" className="flex items-center font-bold text-2xl">
-            Startup<span className="text-primary-300">Vista</span>
+    <div className="flex h-screen max-h-screen bg-primary-200">
+      <section className="remove-scrollbar container my-auto">
+        <div className="sub-container max-w-[496px]">
+          <Link href="/">
+            <Image
+              src="/images/logo.png"
+              alt="patient"
+              width={300}
+              height={100}
+              className="mb-12 h-10 w-fit"
+            />
           </Link>
-        </div>
-        <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-md">
-            <LoginForm />
+          <LoginForm />
+          <div className="text-sm leading-4.5 font-normal mt-20 flex justify-between">
+            <p className="justify-items-end text-dark-600 xl:text-left">
+              © 2025 StartupVista
+            </p>
+            <div>
+              Don&apos;t have an account?{" "}
+              <Link href="/start-up/register" className="text-primary-500 font-bold hover:underline">
+                Get Started
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
-      <div className="bg-muted relative hidden lg:block">
-        <img
-          src="/images/login.png"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-      </div>
+      </section>
+      <Image
+        src="/images/login.png"
+        alt="login"
+        width={1000}
+        height={1000}
+        className="side-img max-w-[50%]"
+        priority
+      />
     </div>
   )
 }
