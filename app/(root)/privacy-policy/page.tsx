@@ -1,13 +1,9 @@
 import { Card } from '@/components/ui/card';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Header } from '@/components/Header';
 import { Separator } from '@/components/ui/separator';
 
 export default function PrivacyPolicyPage() {
     return (
         <div className="min-h-screen bg-[#F0F7FC]">
-            <Header />
-
             {/* Main Content */}
             <div className="container mx-auto px-4 py-12 max-w-4xl">
                 {/* Title Section */}

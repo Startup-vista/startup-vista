@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import { Card } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Header } from '@/components/Header';
 import { Separator } from '@/components/ui/separator';
 
 export default function AboutPage() {
@@ -50,26 +49,22 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-[#F0F7FC]">
-        <Header />
       {/* Hero Section */}
-      <div className="relative w-full h-96">
+      <div className="w-full h-1/10">
         <Image
-          src="/images/about.svg"
+          src="/images/about.png"
           alt="StartupVista About"
           width={2000}
           height={2000}
-          className="object-cover"
+          className="object-cover w-full"
           priority
         />
       </div>
       
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-12 max-w-4xl mt-20">
+      <div className="container mx-auto px-4 py-12 max-w-4xl">
         {/* Our Story Section */}
-        <div className="bg-[#1C4BC6] items-center justify-center w-fit p-5">
-          <h1 className="text-4xl md:text-5xl font-bold text-white">OUR STORY</h1>
-        </div>
         <section className="mb-16 pt-12">
           <h2 className="text-3xl font-bold text-[#0D0D0D] w-fit border-b-5 border-[#1C4BC6]">Why We Started StartupVista &nbsp;&nbsp;&nbsp;</h2>
           <Separator />

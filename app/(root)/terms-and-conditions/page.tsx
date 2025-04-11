@@ -4,9 +4,7 @@ import { Separator } from '@/components/ui/separator';
 
 export default function TermsAndConditionsPage() {
   return (
-    <div className="min-h-screen bg-[#F0F7FC]">
-      <Header />
-      
+    <div className="min-h-screen bg-[#F0F7FC]">      
       {/* Main Content */}
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         {/* Title Section */}

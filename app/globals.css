@@ -106,22 +106,29 @@ body {
 }
 
 
-.text-primary-500 {
+.primary-500 {
   color: var(--primary-500);
 }
 
-.text-primary-100 {
+.primary-100 {
   color: var(--primary-100);
 }
 
-.text-primary-200 {
+.primary-200 {
   color: var(--primary-200);
 }
 
-.text-primary-300 {
+.primary-300 {
   color: var(--primary-300);
 }
 
+.secondary-300 {
+  color: var(--secondary-300);
+}
+
+.secondary-200 {
+  color: var(--secondary-200);
+}
 
 .text-900 {
   color: var(--text-900);
