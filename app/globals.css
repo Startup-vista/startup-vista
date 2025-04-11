@@ -106,39 +106,39 @@ body {
 }
 
 
-.primary-500 {
+.text-primary-500 {
   color: var(--primary-500);
 }
 
-.primary-100 {
+.text-primary-100 {
   color: var(--primary-100);
 }
 
-.primary-200 {
+.text-primary-200 {
   color: var(--primary-200);
 }
 
-.primary-300 {
+.text-primary-300 {
   color: var(--primary-300);
 }
 
-.secondary-300 {
+.text-secondary-300 {
   color: var(--secondary-300);
 }
 
-.secondary-200 {
+.text-secondary-200 {
   color: var(--secondary-200);
 }
 
-.text-900 {
+.text-text-900 {
   color: var(--text-900);
 }
 
-.text-800 {
+.text-text-800 {
   color: var(--text-800);
 }
 
-.text-600 {
+.text-text-600 {
   color: var(--text-600);
 }
 

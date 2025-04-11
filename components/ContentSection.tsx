@@ -2,7 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Card } from './ui/card';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Eye } from 'lucide-react';
 
 interface CardItem {
   id: number;
@@ -11,6 +11,7 @@ interface CardItem {
   timePosted: string;
   title: string;
   subheading: string;
+  views: number; // Added views count
 }
 
 interface ContentSectionProps {
@@ -63,6 +64,17 @@ const ContentSection: React.FC<ContentSectionProps> = ({ title, cards, viewMoreU
 };
 
 const CardItem: React.FC<{ card: CardItem; large?: boolean }> = ({ card, large = false }) => {
+  // Format views count (e.g., 1500 -> 1.5k)
+  const formatViews = (views: number): string => {
+    if (views >= 1000000) {
+      return `${(views / 1000000).toFixed(1)}M`;
+    }
+    if (views >= 1000) {
+      return `${(views / 1000).toFixed(1)}k`;
+    }
+    return views.toString();
+  };
+
   return (
     <Card className="overflow-hidden border-0 h-fit shadow-sm hover:shadow-md transition-shadow duration-200">
       <Link href={`/article/${card.id}`} className="block h-full">
@@ -77,21 +89,30 @@ const CardItem: React.FC<{ card: CardItem; large?: boolean }> = ({ card, large =
             />
           </div>
           
-          <div className="p-4 pb-0">
+          <div className="p-4">
             <div className="flex items-center mb-2">
               <div className="h-6 w-6 rounded-full bg-secondary-200 mr-2" />
-              <span className="text-xs font-medium text-text-600">{card.company}</span>
-              <span className="text-xs text-secondary-300 ml-2">• {card.timePosted}</span>
+              <span className="text-xs font-medium text-text-600 hover:underline">{card.company}</span>
+              <span className="text-xs text-secondary-300 mx-2">•</span>
+              <span className="text-xs text-secondary-300">{card.timePosted}</span>
             </div>
             
-            <h3 className={`font-bold mb-2 text-text-800 line-clamp-2 ${large ? 'text-lg sm:text-xl' : 'text-base'}`}>
+            <h3 className={`font-bold mb-2 text-text-800 line-clamp-2 hover:underline ${large ? 'text-lg sm:text-xl' : 'text-base'}`}>
               {card.title}
             </h3>
             
-            {/* Show subheading only on medium screens and up */}
-            <p className="hidden sm:block text-sm text-text-600 line-clamp-2">
+            {/* Subheading with proper line clamping */}
+            <div className={`hidden sm:block text-sm text-text-600 mb-3`}>
+              <div className='line-clamp-2'>
               {card.subheading}
-            </p>
+              </div>
+            </div>
+            
+            {/* Views count */}
+            <div className="flex items-center text-xs text-secondary-400">
+              <Eye className="h-3 w-3 mr-1" />
+              <span>{formatViews(card.views)} views</span>
+            </div>
           </div>
         </div>
       </Link>

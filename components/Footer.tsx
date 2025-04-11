@@ -86,60 +86,23 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Newsletter */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-text-900">Stay Updated</h3>
-            <Card className="p-4 bg-white border-primary-100">
-              <p className="mb-4 text-sm">
-                Subscribe to our newsletter for the latest updates and news.
-              </p>
-              <div className="flex gap-2 mb-4">
-                <Input 
-                  type="email" 
-                  placeholder="Your email" 
-                  className="flex-1 border-secondary-300 text-sm focus-visible:ring-0"
-                />
-                <Button className="bg-primary-500 cursor-pointer text-white">
-                  Subscribe
-                </Button>
-              </div>
-              <div className="flex items-start space-x-2">
-                <input 
-                  type="checkbox" 
-                  id="newsletter-consent" 
-                  className="mt-1 cursor-pointer"
-                />
-                <label 
-                  htmlFor="newsletter-consent" 
-                  className="text-xs text-secondary-600"
-                >
-                  I agree to receive marketing communications from StartupVista.
-                </label>
-              </div>
-            </Card>
-
             {/* Social Links */}
-            <div className="mt-6">
-              <h3 className="text-lg font-semibold mb-4 text-text-900">Follow Us</h3>
-              <div className="flex space-x-4">
+              <h3 className="text-lg font-semibold mb-4 text-text-900">Follow Us On</h3>
+              <div className="flex flex-col space-y-3">
                 {socialLinks.map((social) => (
                   <Link 
                     key={social.name}
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:opacity-75 transition-opacity"
+                    className="hover:underline transition-opacity"
                   >
-                    <img 
-                      src={social.icon} 
-                      alt={social.name} 
-                      className="w-6 h-6"
-                    />
+                    {social.name}
                   </Link>
                 ))}
               </div>
             </div>
-          </div>
         </div>
 
         <Separator className="my-8 bg-secondary-200" />
