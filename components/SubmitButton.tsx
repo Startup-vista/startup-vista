@@ -4,7 +4,7 @@ import Image from "next/image";
 
 interface ButtonProps {
     isLoading: boolean,
-    isEmailVerified: boolean,
+    isEmailVerified?: boolean,
     className?: string,
     children: React.ReactNode,
 }

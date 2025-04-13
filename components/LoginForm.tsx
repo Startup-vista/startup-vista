@@ -46,14 +46,6 @@ export const LoginForm = () => {
           iconSrc="/icons/email.svg"
           iconAlt="email"
         />
-
-        <CustomFormField
-          fieldType={FormFieldType.PHONE_INPUT}
-          control={form.control}
-          name="phone"
-          label="Phone Number"
-          placeholder="Enter your phone number"
-        />
         <div className="grid gap-3">
           <CustomFormField
             fieldType={FormFieldType.PWD}
