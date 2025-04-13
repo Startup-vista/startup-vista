@@ -13,6 +13,19 @@ import { FormFieldType } from "./RegisterForm";
 import { useState } from "react";
 import CustomFormField from "./CustomFormField";
 import { Check } from "lucide-react";
+import { useFormContext } from "react-hook-form";
+
+// Add this to your existing VerificationField props
+interface VerificationFieldProps {
+  name: string;
+  label: string;
+  control: any;
+  placeholder?: string;
+  iconSrc?: string;
+  iconAlt?: string;
+  fieldType?: FormFieldType;
+  onVerificationComplete?: (isVerified: boolean) => void;
+}
 
 export const VerificationField = ({
   name,
@@ -21,38 +34,91 @@ export const VerificationField = ({
   placeholder,
   iconSrc,
   iconAlt,
-  fieldType = FormFieldType.INPUT
-}: {
-  name: string;
-  label: string;
-  control: any;
-  placeholder?: string;
-  iconSrc?: string;
-  iconAlt?: string;
-  fieldType?: FormFieldType;
-}) => {
+  fieldType = FormFieldType.INPUT,
+  onVerificationComplete
+}: VerificationFieldProps) => {
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState("");
   const [isVerified, setIsVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState(false);
+  const [error, setError] = useState("");
+  const { getValues } = useFormContext();
 
-  const handleVerify = () => {
-    setOpen(true);
+  const handleVerify = async () => {
+    const email = getValues(name);
+    if (!email) {
+      alert(`Please enter your ${label.toLowerCase()} first`);
+      return;
+    }
+
+    try {
+      setSendingOtp(true);
+      setError("");
+      
+      const response = await fetch("/api/email-verification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          action: "generate",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send verification code");
+      }
+
+      setOpen(true);
+      console.log(`Verification code sent to ${email}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send verification code");
+      console.error("Error sending verification code:", err);
+    } finally {
+      setSendingOtp(false);
+    }
   };
 
   const handleSubmitCode = async () => {
     setIsLoading(true);
+    setError("");
+    
     try {
-      // Simulate verification API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const email = getValues(name);
+      
+      const response = await fetch("/api/email-verification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          code,
+          action: "verify",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Verification failed");
+      }
+      
       setIsVerified(true);
       setOpen(false);
-    } catch (error) {
-      console.error("Verification failed:", error);
+      onVerificationComplete?.(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Verification failed");
+      console.error("Verification failed:", err);
     } finally {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="flex items-end gap-2 w-full flex-1">

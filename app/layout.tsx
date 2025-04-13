@@ -3,6 +3,7 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import {cn} from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/sonner"
 import React from "react";
 
 
@@ -26,13 +27,14 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
         <body
-            className={cn('min-h-screen font-sans bg-white antialiased',font_Sans.variable)}
+            className={cn('min-h-screen font-sans bg-primary-200 antialiased',font_Sans.variable)}
         >
         <ThemeProvider
             attribute="class"
-            defaultTheme="dark"
+            defaultTheme="light"
         >
             {children}
+            <Toaster />
         </ThemeProvider>
         </body>
         </html>

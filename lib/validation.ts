@@ -1,6 +1,8 @@
+// validation.ts
 import { z } from "zod";
-import { Gender, FundingStage, Industry } from "@/constants";
+import { Gender, FundingStage, Industry, Registered, TeamSize, FundingType } from "@/constants";
 
+// Password validation helpers
 const passwordValidation = {
   min8Chars: (val: string) => val.length >= 8,
   hasUpperCase: (val: string) => /[A-Z]/.test(val),
@@ -9,19 +11,38 @@ const passwordValidation = {
   hasSpecialChar: (val: string) => /[!@#$%^&*(),.?":{}|<>]/.test(val),
 };
 
+// Constants for validation
 const genderOptions = Gender as [string, ...string[]];
+const registeredOptions = Registered as [string, ...string[]];
+const teamSizeOptions = TeamSize as [string, ...string[]];
+const fundingTypeOptions = FundingType as [string, ...string[]];
 const fundingStageNames = FundingStage.map(stage => stage.name);
 const industryNames = Industry.map(industry => industry.name);
 
-export const UserFormValidation = z.object({
-  email: z.string().email("Invalid email address"),
-  phone: z
-      .string()
-      .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
-  password: z.string()
-});
+// Common validations
+const emailValidation = z.string().email("Please enter a valid email address");
+const phoneValidation = z.string()
+  .refine((phone) => /^\+\d{10,15}$/.test(phone), {
+    message: "Please enter a valid phone number with country code (e.g. +1234567890)"
+  });
+const urlValidation = z.string()
+  .url("Please enter a valid URL")
+  .refine(url => url.startsWith("http://") || url.startsWith("https://"), {
+    message: "URL must start with http:// or https://"
+  });
+
+  export const UserFormValidation = z.object({
+    email: z.string().email("Invalid email address"),
+    phone: z
+        .string()
+        .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
+    password: z.string()
+  });
 
 export const RegisterFormValidation = z.object({
+  // Authentication fields
+  companyEmail: emailValidation,
+  personalEmail: emailValidation,
   password: z.string()
     .min(8, "Password must be at least 8 characters")
     .max(20, "Password must be at most 20 characters")
@@ -29,97 +50,28 @@ export const RegisterFormValidation = z.object({
     .refine(passwordValidation.hasLowerCase, "Password must contain at least one lowercase letter")
     .refine(passwordValidation.hasNumber, "Password must contain at least one number")
     .refine(passwordValidation.hasSpecialChar, "Password must contain at least one special character"),
+  confirmPassword: z.string(),
 
-  email: z.string().email("Please enter a valid email address"),
-  
-  phone: z.string()
-    .refine((phone) => /^\+\d{10,15}$/.test(phone), {
-      message: "Please enter a valid phone number with country code (e.g. +1234567890)"
-    }),
-
-  birthDate: z.coerce.date()
-    .max(new Date(), "Birth date cannot be in the future")
-    .refine(date => {
-      const minDate = new Date();
-      minDate.setFullYear(minDate.getFullYear() - 120);
-      return date >= minDate;
-    }, "Please enter a valid birth date"),
-
-  foundingDate: z.coerce.date()
-    .max(new Date(), "Founding date cannot be in the future"),
-
-  fundingDate: z.coerce.date()
-    .max(new Date(), "Funding date cannot be in the future")
-    .optional(),
-
-  gender: z.enum(genderOptions, {
-    errorMap: () => ({ message: `Please select a valid gender`})
-  }),
-
+  // Company registration fields
+  registered: z.enum(registeredOptions),
   companyName: z.string()
     .min(2, "Company name must be at least 2 characters")
-    .max(50, "Company name must be at most 50 characters"),
-
-    industry: z.string()
+    .max(50, "Company name must be at most 50 characters")
+    .optional(),
+  brandName: z.string()
+    .min(2, "Brand name must be at least 2 characters")
+    .max(50, "Brand name must be at most 50 characters"),
+  establishedDate: z.coerce.date()
+    .max(new Date(), "Established date cannot be in the future"),
+  industry: z.string()
     .refine(val => industryNames.includes(val), {
       message: `Select from: ${industryNames.join(', ')}`
     }),
+  teamSize: z.enum(teamSizeOptions),
+  aboutCompany: z.string()
+    .max(600, "Description must be at most 600 characters"),
 
-  productUrl: z.string()
-    .url("Please enter a valid URL")
-    .refine(url => url.startsWith("http://") || url.startsWith("https://"), {
-      message: "URL must start with http:// or https://"
-    }),
-
-  androidLink: z.string()
-    .url("Please enter a valid URL")
-    .optional(),
-
-  iosLink: z.string()
-    .url("Please enter a valid URL")
-    .optional(),
-
-    fundingStage: z.string()
-    .refine(val => fundingStageNames.includes(val), {
-      message: `Select from: ${fundingStageNames.join(', ')}`
-    }),
-
-  fundingAmount: z.string()
-    .refine(val => {
-      if (!val) return true;
-      return /^[0-9]+$/.test(val);
-    }, {
-      message: "Funding amount must be a positive number"
-    })
-    .optional(),
-
-  linkedin: z.string()
-    .url("Please enter a valid URL")
-    .refine(url => url.includes("linkedin.com"), {
-      message: "Please enter a valid LinkedIn URL"
-    }),
-
-  instagram: z.string()
-    .url("Please enter a valid URL")
-    .refine(url => url.includes("instagram.com"), {
-      message: "Please enter a valid Instagram URL"
-    })
-    .optional(),
-
-  x: z.string()
-    .url("Please enter a valid URL")
-    .refine(url => url.includes("x.com") || url.includes("twitter.com"), {
-      message: "Please enter a valid X/Twitter URL"
-    })
-    .optional(),
-
-  facebook: z.string()
-    .url("Please enter a valid URL")
-    .refine(url => url.includes("facebook.com"), {
-      message: "Please enter a valid Facebook URL"
-    })
-    .optional(),
-
+  // File uploads
   companyLogo: z.custom<File[]>()
     .refine(files => files.length <= 1, "You can upload only one file")
     .refine(files => !files.length || files[0].size <= 5 * 1024 * 1024, {
@@ -127,45 +79,131 @@ export const RegisterFormValidation = z.object({
     })
     .refine(files => !files.length || ['image/jpeg', 'image/png', 'image/webp'].includes(files[0].type), {
       message: "Only .jpg, .png, and .webp formats are supported"
-    })
-    .optional(),
-
-    incorporationCertificate: z.custom<File[]>()
+    }),
+  incorporationCertificate: z.custom<File[]>()
     .refine(files => files.length <= 1, "You can upload only one file")
     .refine(files => !files.length || files[0].size <= 10 * 1024 * 1024, {
       message: "Max file size is 10MB"
     })
-    .refine(files => !files.length || [
-      'application/pdf',
-    ].includes(files[0].type), {
+    .refine(files => !files.length || ['application/pdf'].includes(files[0].type), {
       message: "Only .pdf format is supported"
-    }),
+    })
+    .optional(),
 
+  // Funding information
+  fundingStage: z.string()
+    .refine(val => fundingStageNames.includes(val), {
+      message: `Select from: ${fundingStageNames.join(', ')}`
+    }),
+  fundingName: z.string()
+    .max(100, "Funding name must be at most 100 characters")
+    .optional(),
+  fundingType: z.enum(fundingTypeOptions)
+    .optional(),
+  fundingDate: z.coerce.date()
+    .max(new Date(), "Funding date cannot be in the future")
+    .optional(),
+  fundingAmount: z.string()
+    .refine(val => {
+      if (!val) return true;
+      return /^[1-9][0-9]*$/.test(val);
+    }, {
+      message: "Funding amount must be a positive number"
+    })
+    .optional(),
+
+  // Personal information
+  designation: z.string()
+    .min(2, "Designation must be at least 2 characters")
+    .max(50, "Designation must be at most 50 characters"),
+  personalPhone: phoneValidation,
+  birthDate: z.coerce.date()
+    .max(new Date(), "Birth date cannot be in the future")
+    .refine(date => {
+      const minDate = new Date();
+      minDate.setFullYear(minDate.getFullYear() - 120);
+      return date >= minDate;
+    }, "Please enter a valid birth date"),
+  gender: z.enum(genderOptions, {
+    errorMap: () => ({ message: `Please select a valid gender`})
+  }),
+
+  // Social links
+  websiteUrl: urlValidation,
+  androidLink: urlValidation.optional(),
+  iosLink: urlValidation.optional(),
+  linkedin: urlValidation
+    .refine(url => url.includes("linkedin.com"), {
+      message: "Please enter a valid LinkedIn URL"
+    }),
+  instagram: urlValidation
+    .refine(url => url.includes("instagram.com"), {
+      message: "Please enter a valid Instagram URL"
+    })
+    .optional(),
+  x: urlValidation
+    .refine(url => url.includes("x.com") || url.includes("twitter.com"), {
+      message: "Please enter a valid X/Twitter URL"
+    })
+    .optional(),
+  facebook: urlValidation
+    .refine(url => url.includes("facebook.com"), {
+      message: "Please enter a valid Facebook URL"
+    })
+    .optional(),
+
+  // Terms acceptance
   privacyConsent: z.literal(true, {
     errorMap: () => ({ message: "You must accept the terms and conditions" })
   })
-}).superRefine((data, ctx) => {
-    if (data.fundingStage === "Funding") {
-      if (!data.fundingDate) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Required when Funding stage selected",
-          path: ["fundingDate"]
-        });
-      }
-      if (!data.fundingAmount) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Required when Funding stage selected",
-          path: ["fundingAmount"]
-        });
-      }
-      if (data.fundingAmount && !/^[1-9][0-9]*$/.test(data.fundingAmount)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Must be positive number",
-          path: ["fundingAmount"]
-        });
-      }
+})
+// Password confirmation check
+.refine(data => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"]
+})
+// Conditional validations
+.superRefine((data, ctx) => {
+  // Company registration validation
+  if (data.registered === "Yes" && !data.companyName) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Company name is required when registered",
+      path: ["companyName"]
+    });
+  }
+
+  // Funding information validation
+  if (data.fundingStage === "Funding") {
+    if (!data.fundingDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Funding date is required when Funding stage selected",
+        path: ["fundingDate"]
+      });
     }
-  });
+    if (!data.fundingAmount) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Funding amount is required when Funding stage selected",
+        path: ["fundingAmount"]
+      });
+    }
+    if (data.fundingAmount && !/^[1-9][0-9]*$/.test(data.fundingAmount)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Funding amount must be a positive number",
+        path: ["fundingAmount"]
+      });
+    }
+  }
+
+  // Incorporation certificate validation
+  if (data.registered === "Yes" && (!data.incorporationCertificate || data.incorporationCertificate.length === 0)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Incorporation certificate is required for registered companies",
+      path: ["incorporationCertificate"]
+    });
+  }
+});

@@ -16,6 +16,8 @@ import { Label } from "@/components/ui/label";
 import { SelectItem } from "@/components/ui/select";
 import FileUploader from "@/components/FileUploader";
 import { VerificationField } from "./VerificationField";
+import { authService } from "@/services/authService";
+import {toast} from "sonner";
 
 
 export enum FormFieldType {
@@ -30,21 +32,96 @@ export enum FormFieldType {
 }
 
 const RegisterForm = () => {
+    const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const [isEmailVerified, setIsEmailVerified] = useState(false);
     const form = useForm<z.infer<typeof RegisterFormValidation>>({
         resolver: zodResolver(RegisterFormValidation),
         defaultValues: {
             ...RegisterFormValidation,
             password: "",
-            email: "",
-            phone: "",
+            companyEmail: "",
         },
     })
 
     async function onSubmit(values: z.infer<typeof RegisterFormValidation>) {
+        if (!isEmailVerified) {
+            toast.error("Please verify your company email before submitting");
+            return;
+          }
         setIsLoading(true);
-
-        setIsLoading(false);
+        try {
+            // Prepare the user data object
+            const userData = {
+                // Company Information
+                companyEmail: values.companyEmail,
+                companyName: values.registered === "Yes" ? values.companyName : null,
+                registered: values.registered,
+                brandName: values.brandName,
+                establishedDate: values.establishedDate,
+                industry: values.industry,
+                teamSize: values.teamSize,
+                fundingStage: values.fundingStage,
+                aboutCompany: values.aboutCompany,
+                
+                // Funding details (if applicable)
+                ...(values.fundingStage === "Funding" && {
+                    fundingName: values.fundingName,
+                    fundingType: values.fundingType,
+                    fundingDate: values.fundingDate,
+                    fundingAmount: values.fundingAmount
+                }),
+                
+                // Personal Information
+                personalEmail: values.personalEmail,
+                designation: values.designation,
+                personalPhone: values.personalPhone,
+                birthDate: values.birthDate,
+                gender: values.gender,
+                
+                // Social Links
+                websiteUrl: values.websiteUrl,
+                androidLink: values.androidLink,
+                iosLink: values.iosLink,
+                linkedin: values.linkedin,
+                instagram: values.instagram,
+                x: values.x,
+                facebook: values.facebook,
+                
+                // System fields (will be merged by authService)
+                isVerified: false, // Default false
+                isPremium: false,  // Default false
+            };
+    
+            // Prepare files for upload
+            const files = {
+                companyLogo: values.companyLogo[0],
+                ...(values.registered === "Yes" && {
+                    incorporationCertificate: values.incorporationCertificate?.[0]
+                })
+            };
+    
+            // Call the auth service
+            await authService.signUp({
+                email: values.companyEmail,
+                password: values.password,
+                userData,
+                files
+            });
+    
+            // Redirect to homepage after successful registration
+            router.push('/');
+            
+            // Optional: Show success message
+            toast.success('Registration successful! Your account is pending verification.');
+        } catch (error) {
+            console.error('Registration error:', error);
+            
+            // Show error message to user
+            toast.error(error instanceof Error ? error.message : 'Registration failed. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     return (
@@ -69,6 +146,7 @@ const RegisterForm = () => {
                         placeholder="Enter your email"
                         iconSrc="/icons/email.svg"
                         iconAlt="email"
+                        onVerificationComplete={(verified) => setIsEmailVerified(verified)}
                     />
                 </div>
 
@@ -396,7 +474,7 @@ const RegisterForm = () => {
                     control={form.control}
                     name="privacyConsent"
                 />
-                <SubmitButton isLoading={isLoading}>Apply Now</SubmitButton>
+                <SubmitButton isLoading={isLoading} isEmailVerified={isEmailVerified}>Apply Now</SubmitButton>
             </form>
         </Form>
     );
