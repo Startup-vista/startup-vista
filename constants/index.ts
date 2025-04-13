@@ -1,21 +1,38 @@
 export const Industry = [
-    {
-        image: "/icons/software.svg",
-        name: "Software Development",
-    },
-    {
-        image: "/icons/electronics.svg",
-        name: "Electronics",
-    },
-    {
-        image: "/icons/robotics.svg",
-        name: "Robotics",
-    },
-    {
-        image: "/icons/lifestyle.svg",
-        name: "Lifestyle",
-    }
+    { name: "ClimateTech startups" },
+    { name: "Agritech startups" },
+    { name: "AI startups" },
+    { name: "Automobile startups" },
+    { name: "Health care" },
+    { name: "Edtech" },
+    { name: "FMCG" },
+    { name: "Gaming" },
+    { name: "Tech startups" },
+    { name: "Cyber security startups" },
+    { name: "Food & Drinks" },
+    { name: "Fashion" },
+    { name: "Beauty" },
+    { name: "Logistics" },
+    { name: "Grocery" },
+    { name: "Fintech" },
+    { name: "Traveltech" },
+    { name: "Clean tech" },
+    { name: "Enterprise tech" },
+    { name: "Retail" },
+    { name: "Consumer interest" },
+    { name: "Ecommerce" },
+    { name: "Entertainment" },
+    { name: "Consulting" },
+    { name: "Tech Service" },
+    { name: "Web3" },
+    { name: "Blockchain" },
+    { name: "Legal service" },
+    { name: "Financial Services" },
+    { name: "Digital Marketing Services" },
+    { name: "Marketing Services" },
+    { name: "Social Media" }
 ];
+
 
 export const FundingStage = [
     {

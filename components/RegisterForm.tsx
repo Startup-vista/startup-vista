@@ -396,7 +396,7 @@ const RegisterForm = () => {
                     control={form.control}
                     name="privacyConsent"
                 />
-                <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
+                <SubmitButton isLoading={isLoading}>Apply Now</SubmitButton>
             </form>
         </Form>
     );

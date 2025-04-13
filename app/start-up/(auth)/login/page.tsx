@@ -18,16 +18,16 @@ export default function LoginPage() {
             />
           </Link>
           <LoginForm />
+          <div className="text-sm text-text-800 leading-4.5 font-normal mt-5 flex justify-end">
+              Don&apos;t have an account ?&nbsp;
+              <Link href="/start-up/register" className="text-primary-500 font-bold hover:underline">
+                Apply Now
+              </Link>
+          </div>
           <div className="text-sm leading-4.5 font-normal mt-20 flex justify-between">
             <p className="justify-items-end text-dark-600 xl:text-left">
               © 2025 StartupVista
             </p>
-            <div>
-              Don&apos;t have an account?{" "}
-              <Link href="/start-up/register" className="text-primary-500 font-bold hover:underline">
-                Get Started
-              </Link>
-            </div>
           </div>
         </div>
       </section>

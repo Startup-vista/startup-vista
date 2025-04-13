@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import Head from 'next/head';
 import ContentSection from '@/components/ContentSection';
 import AdContainer from '@/components/AdContainer';
 
@@ -10,123 +9,23 @@ const initialSections = [
   {
     id: 1,
     title: "Trending News",
-    cards: [
-      {
-        id: 1,
-        coverImage: "/images/news1.jpg",
-        company: "Avocado tech",
-        timePosted: "4 hours ago",
-        title: "Section 1.10.32 of \"de Finibus Bonorum et Malorum\", written by Cicero in 45 BC",
-        subheading: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
-        views: 12500
-      },
-      {
-        id: 2,
-        coverImage: "/images/news2.jpg",
-        company: "Avocado tech",
-        timePosted: "4 hours ago",
-        title: "Section 1.10.32 of \"de Finibus Bonorum et Malorum\", written by Cicero in 45 BC",
-        subheading: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
-        views: 9800
-      },
-      {
-        id: 3,
-        coverImage: "/images/news3.jpg",
-        company: "Avocado tech",
-        timePosted: "4 days ago",
-        title: "Section 1.10.32 of \"de Finibus Bonorum et Malorum\", written by Cicero in 45 BC",
-        subheading: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
-        views: 24500
-      },
-      {
-        id: 4,
-        coverImage: "/images/news4.jpg",
-        company: "Avocado tech",
-        timePosted: "20 Feb 2025",
-        title: "Section 1.10.32 of \"de Finibus Bonorum et Malorum\", written by Cicero in 45 BC",
-        subheading: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
-        views: 35600
-      },
-      {
-        id: 5,
-        coverImage: "/images/news5.jpg",
-        company: "Avocado tech",
-        timePosted: "20 Feb 2025",
-        title: "Section 1.10.32 of \"de Finibus Bonorum et Malorum\", written by Cicero in 45 BC",
-        subheading: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
-        views: 28700
-      },
-      {
-        id: 6,
-        coverImage: "/images/news6.jpg",
-        company: "Avocado tech",
-        timePosted: "20 Feb 2025",
-        title: "Section 1.10.32 of \"de Finibus Bonorum et Malorum\", written by Cicero in 45 BC",
-        subheading: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
-        views: 31200
-      }
-    ]
+    cards: []
   },
   {
     id: 2,
-    title: "Tech Updates",
-    cards: [
-      {
-        id: 1,
-        coverImage: "/images/tech1.jpg",
-        company: "Avocado tech",
-        timePosted: "4 hours ago",
-        title: "Section 1.10.32 of \"de Finibus Bonorum et Malorum\", written by Cicero in 45 BC",
-        subheading: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
-        views: 18500
-      },
-      {
-        id: 2,
-        coverImage: "/images/tech2.jpg",
-        company: "Avocado tech",
-        timePosted: "4 hours ago",
-        title: "Section 1.10.32 of \"de Finibus Bonorum et Malorum\", written by Cicero in 45 BC",
-        subheading: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
-        views: 14200
-      },
-      {
-        id: 3,
-        coverImage: "/images/tech3.jpg",
-        company: "Avocado tech",
-        timePosted: "4 days ago",
-        title: "Section 1.10.32 of \"de Finibus Bonorum et Malorum\", written by Cicero in 45 BC",
-        subheading: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
-        views: 27500
-      },
-      {
-        id: 4,
-        coverImage: "/images/tech4.jpg",
-        company: "Avocado tech",
-        timePosted: "20 Feb 2025",
-        title: "Section 1.10.32 of \"de Finibus Bonorum et Malorum\", written by Cicero in 45 BC",
-        subheading: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
-        views: 42100
-      },
-      {
-        id: 5,
-        coverImage: "/images/tech5.jpg",
-        company: "Avocado tech",
-        timePosted: "20 Feb 2025",
-        title: "Section 1.10.32 of \"de Finibus Bonorum et Malorum\", written by Cicero in 45 BC",
-        subheading: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
-        views: 38900
-      },
-      {
-        id: 6,
-        coverImage: "/images/tech6.jpg",
-        company: "Avocado tech",
-        timePosted: "20 Feb 2025",
-        title: "Section 1.10.32 of \"de Finibus Bonorum et Malorum\", written by Cicero in 45 BC",
-        subheading: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
-        views: 36500
-      }
-    ]
-  }
+    title: "Founder Stories",
+    cards: []
+  },
+  {
+    id: 3,
+    title: "In-depth",
+    cards: []
+  },
+  {
+    id: 4,
+    title: "Market Trends",
+    cards: []
+  },
 ];
 
 export default function HomePage() {

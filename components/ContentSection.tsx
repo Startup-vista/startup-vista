@@ -2,7 +2,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { Card } from './ui/card';
-import { ArrowRight, Eye } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Eye, FileX } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface CardItem {
   id: number;
@@ -11,7 +12,7 @@ interface CardItem {
   timePosted: string;
   title: string;
   subheading: string;
-  views: number; // Added views count
+  views: number;
 }
 
 interface ContentSectionProps {
@@ -21,44 +22,59 @@ interface ContentSectionProps {
 }
 
 const ContentSection: React.FC<ContentSectionProps> = ({ title, cards, viewMoreUrl }) => {
-  if (!cards || cards.length < 5) {
-    return null;
-  }
-
-  const mainCard = cards[0];
-  const sideCard = cards[1];
-  const bottomCards = cards.slice(2, 6);
+  // Check if cards array exists and has any items
+  const hasAnyContent = cards && cards.length > 0;
+  
+  // Check if we have enough content to warrant a "View More" link
+  const hasEnoughForViewMore = cards && cards.length > 6;
 
   return (
     <div className="my-8">
       {/* Header with title and view more link */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl md:text-2xl font-bold text-text-800">{title}</h2>
-        <Link href={viewMoreUrl} className="flex items-center text-primary-500 text-sm font-medium hover:underline">
-          View More
-          <ArrowRight className="ml-1 h-4 w-4" />
-        </Link>
+        {hasEnoughForViewMore && (
+          <Link href={viewMoreUrl} className="flex items-center text-primary-500 text-sm font-medium hover:underline">
+            View More
+            <ArrowRight className="ml-1 h-4 w-4" />
+          </Link>
+        )}
       </div>
 
-      {/* Responsive cards grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Main large card - full width on mobile, 2 cols on sm+, 2 cols on lg+ */}
-        <div className="sm:col-span-2 lg:col-span-3">
-          <CardItem card={mainCard} large />
-        </div>
+      {hasAnyContent ? (
+        // Responsive cards grid
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Main large card - always show if at least 1 card exists */}
+          {cards.length >= 1 && (
+            <div className="sm:col-span-2 lg:col-span-3">
+              <CardItem card={cards[0]} large />
+            </div>
+          )}
 
-        {/* Side card - full width on mobile, 1 col on sm+, 1 col on lg+ */}
-        <div className="sm:col-span-1">
-          <CardItem card={sideCard} />
+          {/* Side card - only show if at least 2 cards exist */}
+          {cards.length >= 2 && (
+            <div className="sm:col-span-1">
+              <CardItem card={cards[1]} />
+            </div>
+          )}
+          
+          {/* Bottom cards - show as many as we have (up to 4) */}
+          {cards.slice(2, 6).map((card) => (
+            <div key={card.id} className="col-span-1">
+              <CardItem card={card} />
+            </div>
+          ))}
         </div>
-        
-        {/* Bottom cards - full width on mobile, 1 col on sm+ */}
-        {bottomCards.map((card) => (
-          <div key={card.id} className="col-span-1">
-            <CardItem card={card} />
-          </div>
-        ))}
-      </div>
+      ) : (
+        // No content message - only show when there are zero cards
+        <div className="flex flex-col justify-center items-center py-12 px-4">
+          <AlertTriangle className='w-32 h-32' />
+          <Alert variant="default" className="max-w-md border-0">
+            <AlertTitle className="text-2xl text-center font-bold text-text-800">Error</AlertTitle>
+            <AlertDescription className='text-text-800 pl-8 font-semibold text-lg'>There are currently no articles in this section.</AlertDescription>
+          </Alert>
+        </div>
+      )}
     </div>
   );
 };
@@ -104,7 +120,7 @@ const CardItem: React.FC<{ card: CardItem; large?: boolean }> = ({ card, large =
             {/* Subheading with proper line clamping */}
             <div className={`hidden sm:block text-sm text-text-600 mb-3`}>
               <div className='line-clamp-2'>
-              {card.subheading}
+                {card.subheading}
               </div>
             </div>
             

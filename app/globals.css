@@ -105,6 +105,14 @@ body {
   background-color: var(--primary-300);
 }
 
+.bg-secondary-200 {
+  background-color: var(--secondary-200);
+}
+
+.bg-secondary-300 {
+  background-color: var(--secondary-300);
+}
+
 
 .text-primary-500 {
   color: var(--primary-500);

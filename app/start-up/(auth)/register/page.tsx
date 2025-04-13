@@ -21,7 +21,12 @@ const Register = async () => {
                         </div>
                     </Link>
                     <RegisterForm />
-                    
+                    <div className="text-end text-sm text-text-600 pr-5">
+                            Already have an account?{" "}
+                            <Link href="/start-up/login" className="text-primary-500 font-bold hover:underline">
+                                Login
+                            </Link>
+                    </div>
                     {/* FAQ Section */}
                     <div className="mt-8 w-full">
                     <section>
@@ -62,12 +67,6 @@ const Register = async () => {
                         <p className="copyright text-text-600 py-4">
                             © 2025 StartupVista
                         </p>
-                        <div className="text-center text-sm text-text-600 py-4">
-                            Already have an account?{" "}
-                            <Link href="/start-up/login" className="text-primary-500 font-bold hover:underline">
-                                Login
-                            </Link>
-                        </div>
                     </div>
                 </div>
             </section>
