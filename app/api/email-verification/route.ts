@@ -1,18 +1,15 @@
-// app/api/verification/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
-import { db } from "@/firebase"; // Your firebase config
+import { db } from "@/firebase";
 import { collection, doc, setDoc, getDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
+import { Resend } from "resend";
 
-// Initialize Resend with your API key
 const resend = new Resend(process.env.RESEND_API_KEY);
-
-// Collection reference for OTPs
 const OTP_COLLECTION = "otps";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, action } = await req.json();
+    const body = await req.json();
+    const { email, action, code } = body;
 
     if (!email) {
       return NextResponse.json(
@@ -23,23 +20,21 @@ export async function POST(req: NextRequest) {
 
     // Generate OTP action
     if (action === "generate") {
-      // Generate a 6-digit OTP
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      
-      // Store OTP in Firestore with 10-minute expiration timestamp
       const expiresAt = new Date();
-      expiresAt.setMinutes(expiresAt.getMinutes() + 10); // 10 minutes from now
-      
+      expiresAt.setMinutes(expiresAt.getMinutes() + 10); // 10 minutes expiration
+
       const docRef = doc(collection(db, OTP_COLLECTION), email);
       await setDoc(docRef, {
         code: otp,
         expiresAt: expiresAt.getTime(),
+        attempts: 0,
         createdAt: serverTimestamp(),
       });
 
-      // Send email with OTP
-      const { data, error } = await resend.emails.send({
-        from: "StartupVista <noreply@yourdomain.com>",
+      // Send email with Resend
+      const { error } = await resend.emails.send({
+        from: "StartupVista <noreply@startupvista.in>",
         to: email,
         subject: "Your Verification Code",
         html: `
@@ -52,7 +47,7 @@ export async function POST(req: NextRequest) {
       });
 
       if (error) {
-        console.error("Failed to send email:", error);
+        await deleteDoc(docRef); // Clean up if email fails
         return NextResponse.json(
           { error: "Failed to send verification email" },
           { status: 500 }
@@ -64,8 +59,6 @@ export async function POST(req: NextRequest) {
     
     // Verify OTP action
     else if (action === "verify") {
-      const { code } = await req.json();
-      
       if (!code) {
         return NextResponse.json(
           { error: "Verification code is required" },
@@ -73,7 +66,6 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // Get the OTP document from Firestore
       const docRef = doc(collection(db, OTP_COLLECTION), email);
       const docSnap = await getDoc(docRef);
       
@@ -87,25 +79,39 @@ export async function POST(req: NextRequest) {
       const otpData = docSnap.data();
       const now = Date.now();
       
-      // Check if OTP is expired
+      // Check expiration
       if (now > otpData.expiresAt) {
-        // Clean up expired OTP
-        await deleteDoc(docRef);
+        await deleteDoc(docRef); // Clean up expired OTP
         return NextResponse.json(
           { error: "Verification code has expired" },
           { status: 400 }
         );
       }
 
-      // Check if the code matches
+      // Check attempts
+      if (otpData.attempts >= 3) {
+        await deleteDoc(docRef); // Clean up after too many attempts
+        return NextResponse.json(
+          { error: "Too many attempts. Please request a new code." },
+          { status: 400 }
+        );
+      }
+
+      // Verify OTP
       if (otpData.code !== code) {
+        // Increment attempt count
+        await setDoc(docRef, {
+          ...otpData,
+          attempts: otpData.attempts + 1
+        }, { merge: true });
+        
         return NextResponse.json(
           { error: "Invalid verification code" },
           { status: 400 }
         );
       }
 
-      // Clean up used OTP
+      // Successful verification - clean up OTP
       await deleteDoc(docRef);
       
       return NextResponse.json({ 

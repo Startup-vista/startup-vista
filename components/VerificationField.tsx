@@ -14,6 +14,7 @@ import { useState } from "react";
 import CustomFormField from "./CustomFormField";
 import { Check } from "lucide-react";
 import { useFormContext } from "react-hook-form";
+import {toast} from "sonner";
 
 // Add this to your existing VerificationField props
 interface VerificationFieldProps {
@@ -48,7 +49,7 @@ export const VerificationField = ({
   const handleVerify = async () => {
     const email = getValues(name);
     if (!email) {
-      alert(`Please enter your ${label.toLowerCase()} first`);
+      toast.error(`Please enter your ${label.toLowerCase()} first`);
       return;
     }
 
@@ -74,10 +75,10 @@ export const VerificationField = ({
       }
 
       setOpen(true);
-      console.log(`Verification code sent to ${email}`);
+      toast.success(`Verification code sent to ${email}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to send verification code");
-      console.error("Error sending verification code:", err);
+      toast.error("Failed to send verification code");
     } finally {
       setSendingOtp(false);
     }
@@ -111,9 +112,10 @@ export const VerificationField = ({
       setIsVerified(true);
       setOpen(false);
       onVerificationComplete?.(true);
+      toast.success("Your email has been successfully verified");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Verification failed");
-      console.error("Verification failed:", err);
+      toast.error("Verification failed");
     } finally {
       setIsLoading(false);
     }
