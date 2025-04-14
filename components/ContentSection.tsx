@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Card } from './ui/card';
 import { AlertTriangle, ArrowRight, Eye, FileX } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import Image from 'next/image';
 
 interface CardItem {
   id: number;
@@ -68,9 +69,8 @@ const ContentSection: React.FC<ContentSectionProps> = ({ title, cards, viewMoreU
       ) : (
         // No content message - only show when there are zero cards
         <div className="flex flex-col justify-center items-center py-12 px-4">
-          <AlertTriangle className='w-32 h-32' />
+          <Image src="/images/nodata.png" width={150} height={150} alt='no data' />
           <Alert variant="default" className="max-w-md border-0">
-            <AlertTitle className="text-2xl text-center font-bold text-text-800">Error</AlertTitle>
             <AlertDescription className='text-text-800 pl-8 font-semibold text-lg'>There are currently no articles in this section.</AlertDescription>
           </Alert>
         </div>

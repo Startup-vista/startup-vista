@@ -249,7 +249,7 @@ body {
 }
 
 .shad-error {
-  @apply text-red-400 ;
+  @apply text-xs mt-1 whitespace-normal text-red-500;
 }
 
 .shad-table {

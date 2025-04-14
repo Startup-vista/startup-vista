@@ -31,7 +31,7 @@ interface CustomProps {
 }
 
 const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
-    const { fieldType, placeholder, iconSrc, iconAlt, showTimeSelect, dateFormat, renderSkeleton } = props;
+    const { fieldType, placeholder, iconSrc, iconAlt, disabled, dateFormat, renderSkeleton } = props;
 
     switch (fieldType) {
         case FormFieldType.INPUT:
@@ -49,6 +49,7 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
                     <FormControl>
                         <Input
                             placeholder={placeholder}
+                            disabled={props.disabled}
                             {...field}
                             className="shad-input border-0"
                         />
@@ -177,8 +178,8 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
                             >
                                 privacy policy
                             </a>
-                        </label>                  
-                        </div>
+                        </label>
+                    </div>
                 </FormControl>
             );
         default:
@@ -194,12 +195,16 @@ const CustomFormField = (props: CustomProps) => {
             control={control}
             name={name}
             render={({ field }) => (
-                <FormItem className="flex-1">
+                <FormItem className="flex-1 flex flex-col">
                     {fieldType !== FormFieldType.CHECKBOX && label && (
                         <FormLabel>{label}</FormLabel>
                     )}
-                    <RenderField field={field} props={props} />
-                    <FormMessage className="shad-error" />
+                    <div className="relative">
+                        <RenderField field={field} props={props} />
+                    </div>
+                    <div className="min-h-[20px]">
+                        <FormMessage className="text-xs text-red-500 empty:invisible" />
+                    </div>
                 </FormItem>
             )}
         />

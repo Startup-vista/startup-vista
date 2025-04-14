@@ -13,6 +13,20 @@ import { FormFieldType } from "./RegisterForm";
 import { useState } from "react";
 import CustomFormField from "./CustomFormField";
 import { Check } from "lucide-react";
+import { useFormContext } from "react-hook-form";
+import {toast} from "sonner";
+
+// Add this to your existing VerificationField props
+interface VerificationFieldProps {
+  name: string;
+  label: string;
+  control: any;
+  placeholder?: string;
+  iconSrc?: string;
+  iconAlt?: string;
+  fieldType?: FormFieldType;
+  onVerificationComplete?: (isVerified: boolean) => void;
+}
 
 export const VerificationField = ({
   name,
@@ -21,38 +35,92 @@ export const VerificationField = ({
   placeholder,
   iconSrc,
   iconAlt,
-  fieldType = FormFieldType.INPUT
-}: {
-  name: string;
-  label: string;
-  control: any;
-  placeholder?: string;
-  iconSrc?: string;
-  iconAlt?: string;
-  fieldType?: FormFieldType;
-}) => {
+  fieldType = FormFieldType.INPUT,
+  onVerificationComplete
+}: VerificationFieldProps) => {
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState("");
   const [isVerified, setIsVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState(false);
+  const [error, setError] = useState("");
+  const { getValues } = useFormContext();
 
-  const handleVerify = () => {
-    setOpen(true);
+  const handleVerify = async () => {
+    const email = getValues(name);
+    if (!email) {
+      toast.error(`Please enter your ${label.toLowerCase()} first`);
+      return;
+    }
+
+    try {
+      setSendingOtp(true);
+      setError("");
+      
+      const response = await fetch("/api/email-verification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          action: "generate",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send verification code");
+      }
+
+      setOpen(true);
+      toast.success(`Verification code sent to ${email}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send verification code");
+      toast.error("Failed to send verification code");
+    } finally {
+      setSendingOtp(false);
+    }
   };
 
   const handleSubmitCode = async () => {
     setIsLoading(true);
+    setError("");
+    
     try {
-      // Simulate verification API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const email = getValues(name);
+      
+      const response = await fetch("/api/email-verification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          code,
+          action: "verify",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Verification failed");
+      }
+      
       setIsVerified(true);
       setOpen(false);
-    } catch (error) {
-      console.error("Verification failed:", error);
+      onVerificationComplete?.(true);
+      toast.success("Your email has been successfully verified");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Verification failed");
+      toast.error("Verification failed");
     } finally {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="flex items-end gap-2 w-full flex-1">
@@ -64,20 +132,23 @@ export const VerificationField = ({
         placeholder={placeholder}
         iconSrc={iconSrc}
         iconAlt={iconAlt}
+        disabled={isVerified}
       />
 
       <Button
         type="button"
         variant={isVerified ? "outline" : "ghost"}
         size="sm"
-        className="mb-1 h-9 min-w-[90px] text-primary-500 cursor-pointer data-[disabled]:opacity-100 data-[disabled]:text-primary-500"
+        className="mb-8 h-9 min-w-[90px] text-base text-primary-500 cursor-pointer data-[disabled]:opacity-100 data-[disabled]:text-primary-500"
         onClick={handleVerify}
-        disabled={isVerified}
+        disabled={isVerified || sendingOtp}
       >
         {isVerified ? (
           <span className="flex items-center gap-1">
             <Check className="w-4 h-4" /> Verified
           </span>
+        ) : sendingOtp ? (
+          "Sending..."
         ) : (
           "Verify"
         )}
