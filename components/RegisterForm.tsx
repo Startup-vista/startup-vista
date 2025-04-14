@@ -17,7 +17,9 @@ import { SelectItem } from "@/components/ui/select";
 import FileUploader from "@/components/FileUploader";
 import { VerificationField } from "./VerificationField";
 import { authService } from "@/services/authService";
-import {toast} from "sonner";
+import { toast } from "sonner";
+import { PlusCircle, X } from "lucide-react";
+import { Button } from "./ui/button";
 
 
 export enum FormFieldType {
@@ -35,12 +37,20 @@ const RegisterForm = () => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
+    const [fundingEntries, setFundingEntries] = useState([0]);
+
     const form = useForm<z.infer<typeof RegisterFormValidation>>({
         resolver: zodResolver(RegisterFormValidation),
         defaultValues: {
             ...RegisterFormValidation,
             password: "",
             companyEmail: "",
+            fundingEntries: [{
+                fundingName: "",
+                fundingType: "",
+                fundingDate: new Date(),
+                fundingAmount: ""
+              }],
         },
     })
 
@@ -48,7 +58,7 @@ const RegisterForm = () => {
         if (!isEmailVerified) {
             toast.error("Please verify your company email before submitting");
             return;
-          }
+        }
         setIsLoading(true);
         try {
             // Prepare the user data object
@@ -63,22 +73,14 @@ const RegisterForm = () => {
                 teamSize: values.teamSize,
                 fundingStage: values.fundingStage,
                 aboutCompany: values.aboutCompany,
-                
-                // Funding details (if applicable)
-                ...(values.fundingStage === "Funding" && {
-                    fundingName: values.fundingName,
-                    fundingType: values.fundingType,
-                    fundingDate: values.fundingDate,
-                    fundingAmount: values.fundingAmount
-                }),
-                
+
                 // Personal Information
                 personalEmail: values.personalEmail,
                 designation: values.designation,
                 personalPhone: values.personalPhone,
                 birthDate: values.birthDate,
                 gender: values.gender,
-                
+
                 // Social Links
                 websiteUrl: values.websiteUrl,
                 androidLink: values.androidLink,
@@ -87,12 +89,18 @@ const RegisterForm = () => {
                 instagram: values.instagram,
                 x: values.x,
                 facebook: values.facebook,
-                
+
                 // System fields (will be merged by authService)
                 isVerified: false, // Default false
                 isPremium: false,  // Default false
+
+                ...(values.fundingStage === "Funding" ? {
+                    fundingEntries: values.fundingEntries
+                  } : {
+                    fundingEntries: undefined
+                  })
             };
-    
+
             // Prepare files for upload
             const files = {
                 companyLogo: values.companyLogo[0],
@@ -100,7 +108,7 @@ const RegisterForm = () => {
                     incorporationCertificate: values.incorporationCertificate?.[0]
                 })
             };
-    
+
             // Call the auth service
             await authService.signUp({
                 email: values.companyEmail,
@@ -108,16 +116,11 @@ const RegisterForm = () => {
                 userData,
                 files
             });
-    
-            // Redirect to homepage after successful registration
-            router.push('/');
-            
-            // Optional: Show success message
             toast.success('Registration successful! Your account is pending verification.');
+            form.reset();
+            router.push('/');
         } catch (error) {
             console.error('Registration error:', error);
-            
-            // Show error message to user
             toast.error(error instanceof Error ? error.message : 'Registration failed. Please try again.');
         } finally {
             setIsLoading(false);
@@ -290,47 +293,80 @@ const RegisterForm = () => {
                 </div>
 
                 {form.watch("fundingStage") === "Funding" && (
-                    <>
-                        <div className="flex flex-col gap-6 xl:flex-row">
-                            <CustomFormField
-                                fieldType={FormFieldType.INPUT}
-                                control={form.control}
-                                name="fundingName"
-                                label="Venture/Investor name"
-                                placeholder="Enter your venture/investor name"
-                            />
-                            <CustomFormField
-                                fieldType={FormFieldType.SELECT}
-                                control={form.control}
-                                name="fundingType"
-                                label="Funding Type"
-                                placeholder="Select your funding type"
-                            >
-                                {FundingType.map((type) => (
-                                    <SelectItem key={type} value={type}>
-                                        <div className="flex cursor-pointer items-center gap-2">
-                                            <p>{type}</p>
-                                        </div>
-                                    </SelectItem>
-                                ))}
-                            </CustomFormField>
-                        </div>
-                        <div className="flex flex-col gap-6 xl:flex-row">
-                            <CustomFormField
-                                fieldType={FormFieldType.DATE_PICKER}
-                                control={form.control}
-                                name="fundingDate"
-                                label="Funding Date"
-                            />
-                            <CustomFormField
-                                fieldType={FormFieldType.INPUT}
-                                control={form.control}
-                                name="fundingAmount"
-                                label="Funding Amount"
-                                placeholder="Enter your funding amount"
-                            />
-                        </div>
-                    </>
+                    <div className="space-y-6">
+                        {fundingEntries.map((_, index) => (
+                            <div key={index} className="space-y-4 border border-secondary-200 bg-primary-100 rounded-lg p-4">
+                                <div className="flex justify-between items-center">
+                                    <h4 className="font-medium">Funding Round {index + 1}</h4>
+                                    {index > 0 && (
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => setFundingEntries(entries => entries.filter((_, i) => i !== index))}
+                                            className="text-red-500 hover:text-red-700 cursor-pointer"
+                                        >
+                                            <X className="h-4 w-4 mr-1" />
+                                            Remove
+                                        </Button>
+                                    )}
+                                </div>
+
+                                {/* First row */}
+                                <div className="flex flex-col gap-6 xl:flex-row">
+                                    <CustomFormField
+                                        fieldType={FormFieldType.INPUT}
+                                        control={form.control}
+                                        name={`fundingEntries.${index}.fundingName`}
+                                        label="Venture/Investor name"
+                                        placeholder="Enter your venture/investor name"
+                                    />
+                                    <CustomFormField
+                                        fieldType={FormFieldType.SELECT}
+                                        control={form.control}
+                                        name={`fundingEntries.${index}.fundingType`}
+                                        label="Funding Type"
+                                        placeholder="Select your funding type"
+                                    >
+                                        {FundingType.map((type) => (
+                                            <SelectItem key={type} value={type}>
+                                                <div className="flex cursor-pointer items-center gap-2">
+                                                    <p>{type}</p>
+                                                </div>
+                                            </SelectItem>
+                                        ))}
+                                    </CustomFormField>
+                                </div>
+
+                                {/* Second row */}
+                                <div className="flex flex-col gap-6 xl:flex-row">
+                                    <CustomFormField
+                                        fieldType={FormFieldType.DATE_PICKER}
+                                        control={form.control}
+                                        name={`fundingEntries.${index}.fundingDate`}
+                                        label="Funding Date"
+                                    />
+                                    <CustomFormField
+                                        fieldType={FormFieldType.INPUT}
+                                        control={form.control}
+                                        name={`fundingEntries.${index}.fundingAmount`}
+                                        label="Funding Amount"
+                                        placeholder="Enter your funding amount"
+                                    />
+                                </div>
+                            </div>
+                        ))}
+
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setFundingEntries(entries => [...entries, entries.length])}
+                            className="gap-2 cursor-pointer"
+                        >
+                            <PlusCircle className="h-4 w-4" />
+                            Add Funding Round
+                        </Button>
+                    </div>
                 )}
 
                 <CustomFormField
@@ -351,11 +387,9 @@ const RegisterForm = () => {
                     <CustomFormField
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
-                        name="personalEmail"
-                        label="Email"
-                        placeholder="Enter your email"
-                        iconSrc="/icons/email.svg"
-                        iconAlt="email"
+                        name="personalName"
+                        label="Name"
+                        placeholder="Enter your name"
                     />
                     <CustomFormField
                         fieldType={FormFieldType.INPUT}
@@ -363,6 +397,18 @@ const RegisterForm = () => {
                         name="designation"
                         label="Designation"
                         placeholder="Enter your designation"
+                    />
+                </div>
+
+                <div className="flex flex-col gap-6 xl:flex-row">
+                    <CustomFormField
+                        fieldType={FormFieldType.INPUT}
+                        control={form.control}
+                        name="personalEmail"
+                        label="Email"
+                        placeholder="Enter your email"
+                        iconSrc="/icons/email.svg"
+                        iconAlt="email"
                     />
                     <CustomFormField
                         fieldType={FormFieldType.PHONE_INPUT}
@@ -476,7 +522,7 @@ const RegisterForm = () => {
                 />
                 <SubmitButton isLoading={isLoading} isEmailVerified={isEmailVerified}>Apply Now</SubmitButton>
             </form>
-        </Form>
+        </Form >
     );
 }
 

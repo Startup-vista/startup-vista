@@ -71,7 +71,6 @@ const ContentSection: React.FC<ContentSectionProps> = ({ title, cards, viewMoreU
         <div className="flex flex-col justify-center items-center py-12 px-4">
           <Image src="/images/nodata.png" width={150} height={150} alt='no data' />
           <Alert variant="default" className="max-w-md border-0">
-            <AlertTitle className="text-2xl text-center font-bold text-text-800">Error</AlertTitle>
             <AlertDescription className='text-text-800 pl-8 font-semibold text-lg'>There are currently no articles in this section.</AlertDescription>
           </Alert>
         </div>

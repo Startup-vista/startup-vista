@@ -132,20 +132,23 @@ export const VerificationField = ({
         placeholder={placeholder}
         iconSrc={iconSrc}
         iconAlt={iconAlt}
+        disabled={isVerified}
       />
 
       <Button
         type="button"
         variant={isVerified ? "outline" : "ghost"}
         size="sm"
-        className="mb-1 h-9 min-w-[90px] text-primary-500 cursor-pointer data-[disabled]:opacity-100 data-[disabled]:text-primary-500"
+        className="mb-8 h-9 min-w-[90px] text-base text-primary-500 cursor-pointer data-[disabled]:opacity-100 data-[disabled]:text-primary-500"
         onClick={handleVerify}
-        disabled={isVerified}
+        disabled={isVerified || sendingOtp}
       >
         {isVerified ? (
           <span className="flex items-center gap-1">
             <Check className="w-4 h-4" /> Verified
           </span>
+        ) : sendingOtp ? (
+          "Sending..."
         ) : (
           "Verify"
         )}

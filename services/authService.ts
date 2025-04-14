@@ -50,24 +50,24 @@ export const authService = {
 
             // 2. Upload files if they exist
             const fileUrls: Record<string, string | null> = {};
-            
+
             if (files) {
                 const uploadPromises = [];
-                
+
                 if (files.companyLogo) {
                     uploadPromises.push(
                         this.uploadFile(`users/${userCredential.user.uid}/companyLogo`, files.companyLogo)
                             .then(url => { fileUrls.companyLogo = url; })
                     );
                 }
-                
+
                 if (files.incorporationCertificate) {
                     uploadPromises.push(
                         this.uploadFile(`users/${userCredential.user.uid}/incorporationCertificate`, files.incorporationCertificate)
                             .then(url => { fileUrls.incorporationCertificate = url; })
                     );
                 }
-                
+
                 await Promise.all(uploadPromises);
             }
 
@@ -83,8 +83,6 @@ export const authService = {
             };
 
             await setDoc(doc(db, "users", userCredential.user.uid), userDoc);
-
-            // 4. Sign out the user (since we don't want automatic login)
             await signOut(auth);
 
         } catch (error) {
@@ -111,6 +109,10 @@ export const authService = {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const isVerified = await this.checkUserVerification(userCredential.user.uid);
         return { user: userCredential, isVerified };
+    },
+
+    async signOut(): Promise<void> {
+        await signOut(auth);
     },
 
     getFirebaseErrorMessage(code: string): string {

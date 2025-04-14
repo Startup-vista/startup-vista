@@ -19,6 +19,13 @@ const fundingTypeOptions = FundingType as [string, ...string[]];
 const fundingStageNames = FundingStage.map(stage => stage.name);
 const industryNames = Industry.map(industry => industry.name);
 
+const FundingEntrySchema = z.object({
+  fundingName: z.string().min(1, "Required"),
+  fundingType: z.enum(fundingTypeOptions),
+  fundingDate: z.date(),
+  fundingAmount: z.string().regex(/^\d+$/, "Must be a number")
+});
+
 // Common validations
 const emailValidation = z.string().email("Please enter a valid email address");
 const phoneValidation = z.string()
@@ -31,13 +38,10 @@ const urlValidation = z.string()
     message: "URL must start with http:// or https://"
   });
 
-  export const UserFormValidation = z.object({
-    email: z.string().email("Invalid email address"),
-    phone: z
-        .string()
-        .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
-    password: z.string()
-  });
+export const UserFormValidation = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string()
+});
 
 export const RegisterFormValidation = z.object({
   // Authentication fields
@@ -91,26 +95,8 @@ export const RegisterFormValidation = z.object({
     .optional(),
 
   // Funding information
-  fundingStage: z.string()
-    .refine(val => fundingStageNames.includes(val), {
-      message: `Select from: ${fundingStageNames.join(', ')}`
-    }),
-  fundingName: z.string()
-    .max(100, "Funding name must be at most 100 characters")
-    .optional(),
-  fundingType: z.enum(fundingTypeOptions)
-    .optional(),
-  fundingDate: z.coerce.date()
-    .max(new Date(), "Funding date cannot be in the future")
-    .optional(),
-  fundingAmount: z.string()
-    .refine(val => {
-      if (!val) return true;
-      return /^[1-9][0-9]*$/.test(val);
-    }, {
-      message: "Funding amount must be a positive number"
-    })
-    .optional(),
+  fundingStage: z.string(),
+  fundingEntries: z.array(FundingEntrySchema).optional(),
 
   // Personal information
   designation: z.string()
@@ -120,12 +106,16 @@ export const RegisterFormValidation = z.object({
   birthDate: z.coerce.date()
     .max(new Date(), "Birth date cannot be in the future")
     .refine(date => {
-      const minDate = new Date();
-      minDate.setFullYear(minDate.getFullYear() - 120);
-      return date >= minDate;
-    }, "Please enter a valid birth date"),
+      const today = new Date();
+      const minDate = new Date(
+        today.getFullYear() - 18,
+        today.getMonth(),
+        today.getDate()
+      );
+      return date <= minDate;
+    }, "You must be at least 18 years old"),
   gender: z.enum(genderOptions, {
-    errorMap: () => ({ message: `Please select a valid gender`})
+    errorMap: () => ({ message: `Please select a valid gender` })
   }),
 
   // Social links
@@ -157,53 +147,33 @@ export const RegisterFormValidation = z.object({
     errorMap: () => ({ message: "You must accept the terms and conditions" })
   })
 })
-// Password confirmation check
-.refine(data => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"]
-})
-// Conditional validations
-.superRefine((data, ctx) => {
-  // Company registration validation
-  if (data.registered === "Yes" && !data.companyName) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Company name is required when registered",
-      path: ["companyName"]
-    });
-  }
-
-  // Funding information validation
-  if (data.fundingStage === "Funding") {
-    if (!data.fundingDate) {
+  // Password confirmation check
+  .refine(data => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"]
+  })
+  // Conditional validations
+  .superRefine((data, ctx) => {
+    // Company registration validation
+    if (data.registered === "Yes" && !data.companyName) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Funding date is required when Funding stage selected",
-        path: ["fundingDate"]
+        message: "Company name is required when registered",
+        path: ["companyName"]
       });
     }
-    if (!data.fundingAmount) {
+    if (data.personalEmail === data.companyEmail) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Funding amount is required when Funding stage selected",
-        path: ["fundingAmount"]
+        message: "Personal email must be different from company email",
+        path: ["personalEmail"]
       });
     }
-    if (data.fundingAmount && !/^[1-9][0-9]*$/.test(data.fundingAmount)) {
+    if (data.registered === "Yes" && (!data.incorporationCertificate || data.incorporationCertificate.length === 0)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Funding amount must be a positive number",
-        path: ["fundingAmount"]
+        message: "Incorporation certificate is required for registered companies",
+        path: ["incorporationCertificate"]
       });
     }
-  }
-
-  // Incorporation certificate validation
-  if (data.registered === "Yes" && (!data.incorporationCertificate || data.incorporationCertificate.length === 0)) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Incorporation certificate is required for registered companies",
-      path: ["incorporationCertificate"]
-    });
-  }
-});
+  });
