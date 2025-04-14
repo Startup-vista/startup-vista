@@ -71,14 +71,18 @@ export const authService = {
                 await Promise.all(uploadPromises);
             }
 
-            // 3. Create user document in Firestore
+            const cleanUserData = Object.fromEntries(
+                Object.entries(userData).filter(([_, value]) => value !== undefined)
+            );
+    
+            // 4. Create user document in Firestore
             const userDoc: UserDocument = {
                 uid: userCredential.user.uid,
                 email,
                 isVerified: false,
                 isPremium: false,
                 createdAt: new Date(),
-                ...userData,
+                ...cleanUserData,
                 ...fileUrls
             };
 

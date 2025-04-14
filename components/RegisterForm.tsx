@@ -45,20 +45,11 @@ const RegisterForm = () => {
             ...RegisterFormValidation,
             password: "",
             companyEmail: "",
-            fundingEntries: [{
-                fundingName: "",
-                fundingType: "",
-                fundingDate: new Date(),
-                fundingAmount: ""
-              }],
+            fundingEntries: [],
         },
     })
 
     async function onSubmit(values: z.infer<typeof RegisterFormValidation>) {
-        if (!isEmailVerified) {
-            toast.error("Please verify your company email before submitting");
-            return;
-        }
         setIsLoading(true);
         try {
             // Prepare the user data object
@@ -145,7 +136,7 @@ const RegisterForm = () => {
                     <VerificationField
                         control={form.control}
                         name="companyEmail"
-                        label="Email"
+                        label="Email*"
                         placeholder="Enter your email"
                         iconSrc="/icons/email.svg"
                         iconAlt="email"
@@ -158,7 +149,7 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.PWD}
                         control={form.control}
                         name="password"
-                        label="Password"
+                        label="Password*"
                         placeholder="Enter your password"
                         iconSrc="/icons/lock.svg"
                         iconAlt="lock"
@@ -167,7 +158,7 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
                         name="confirmPassword"
-                        label="Confirm Password"
+                        label="Confirm Password*"
                         placeholder="Confirm your password"
                         iconSrc="/icons/lock.svg"
                         iconAlt="lock"
@@ -178,7 +169,7 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.SKELETON}
                         control={form.control}
                         name="companyLogo"
-                        label="Company Logo"
+                        label="Company Logo*"
                         renderSkeleton={(field) => (
                             <FormControl>
                                 <FileUploader files={field.value} onChange={field.onChange} accept={{ 'image/*': ['.png', '.jpg', '.jpeg', '.webp'] }} />
@@ -190,7 +181,7 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.SELECT}
                         control={form.control}
                         name="registered"
-                        label="Is your company registered ?"
+                        label="Is your company registered ?*"
                         placeholder="Select your choice"
                     >
                         {Registered.map((choice) => (
@@ -229,20 +220,20 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
                         name="brandName"
-                        label="Brand Name"
+                        label="Brand Name*"
                         placeholder="Enter your brand name"
                     />
                     <CustomFormField
                         fieldType={FormFieldType.DATE_PICKER}
                         control={form.control}
                         name="establishedDate"
-                        label="Established Date"
+                        label="Established Date*"
                     />
                     <CustomFormField
                         fieldType={FormFieldType.SELECT}
                         control={form.control}
                         name="industry"
-                        label="Industry"
+                        label="Industry*"
                         placeholder="Select your industry"
                         iconSrc="/icons/box.svg"
                         iconAlt="industry"
@@ -262,7 +253,7 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.SELECT}
                         control={form.control}
                         name="teamSize"
-                        label="Team Size"
+                        label="Team Size*"
                         placeholder="Select your team size"
                     >
                         {TeamSize.map((size) => (
@@ -277,7 +268,7 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.SELECT}
                         control={form.control}
                         name="fundingStage"
-                        label="Funding Stage"
+                        label="Funding Stage*"
                         placeholder="Select your funding stage"
                         iconSrc="/icons/rupee.svg"
                         iconAlt="rupee"
@@ -373,7 +364,7 @@ const RegisterForm = () => {
                     fieldType={FormFieldType.TEXTAREA}
                     control={form.control}
                     name="aboutCompany"
-                    label="About Company"
+                    label="About Company*"
                     placeholder="Let us know about your company (max. 600 characters)"
                 />
 
@@ -388,14 +379,14 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
                         name="personalName"
-                        label="Name"
+                        label="Name*"
                         placeholder="Enter your name"
                     />
                     <CustomFormField
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
                         name="designation"
-                        label="Designation"
+                        label="Designation*"
                         placeholder="Enter your designation"
                     />
                 </div>
@@ -405,7 +396,7 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
                         name="personalEmail"
-                        label="Email"
+                        label="Email*"
                         placeholder="Enter your email"
                         iconSrc="/icons/email.svg"
                         iconAlt="email"
@@ -414,7 +405,7 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.PHONE_INPUT}
                         control={form.control}
                         name="personalPhone"
-                        label="Phone Number"
+                        label="Phone Number*"
                         placeholder="Enter your phone number"
                     />
                 </div>
@@ -424,13 +415,13 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.DATE_PICKER}
                         control={form.control}
                         name="birthDate"
-                        label="Date of Birth"
+                        label="Date of Birth*"
                     />
                     <CustomFormField
                         fieldType={FormFieldType.SKELETON}
                         control={form.control}
                         name="gender"
-                        label="Gender"
+                        label="Gender*"
                         renderSkeleton={(field) => (
                             <FormControl>
                                 <RadioGroup
@@ -463,7 +454,7 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
                         name="websiteUrl"
-                        label="Website URL"
+                        label="Website URL*"
                         placeholder="Enter your website url"
                     />
                     <CustomFormField
@@ -487,7 +478,7 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
                         name="linkedin"
-                        label="LinkedIn"
+                        label="LinkedIn*"
                         placeholder="Enter your LinkedIn link"
                     />
                     <CustomFormField

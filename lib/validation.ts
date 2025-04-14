@@ -57,8 +57,12 @@ export const RegisterFormValidation = z.object({
   confirmPassword: z.string(),
 
   // Company registration fields
-  registered: z.enum(registeredOptions),
+  registered: z.enum(registeredOptions).optional(),
   companyName: z.string()
+    .min(2, "Company name must be at least 2 characters")
+    .max(50, "Company name must be at most 50 characters")
+    .optional(),
+  personalName: z.string()
     .min(2, "Company name must be at least 2 characters")
     .max(50, "Company name must be at most 50 characters")
     .optional(),
