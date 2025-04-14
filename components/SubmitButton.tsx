@@ -9,9 +9,14 @@ interface ButtonProps {
     children: React.ReactNode,
 }
 
-const SubmitButton = ({isLoading,isEmailVerified,className,children}: ButtonProps) => {
+const SubmitButton = ({isLoading, isEmailVerified, className, children}: ButtonProps) => {
     return (
-        <Button type="submit" disabled={!isEmailVerified || isLoading} className={className ?? "cursor-pointer shad-primary-btn w-full"}>
+        <Button 
+            type="submit" 
+            disabled={!isEmailVerified || isLoading} 
+            className={className ?? "cursor-pointer shad-primary-btn w-full"}
+            title={!isEmailVerified ? "Please verify your email first" : ""}
+        >
             {isLoading ? (
                 <div className="flex items-center gap-4">
                     <Image
@@ -23,7 +28,7 @@ const SubmitButton = ({isLoading,isEmailVerified,className,children}: ButtonProp
                     />
                     Loading ...
                 </div>
-            ) : children }
+            ) : !isEmailVerified ? "Verify Email to Continue" : children}
         </Button>
     );
 };
