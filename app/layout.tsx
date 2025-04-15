@@ -59,7 +59,7 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <body
-                className={cn('min-h-screen font-sans bg-primary-200 antialiased', font_Sans.variable)}
+                className={cn('min-h-screen font-sans bg-primary-200 antialiased remove-scrollbar', font_Sans.variable)}
             >
                 <ThemeProvider
                     attribute="class"
