@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { initializeFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-
+import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY, 
@@ -19,4 +19,5 @@ export const auth = getAuth(app);
 export const db = initializeFirestore(app, {
     experimentalForceLongPolling: true,
 });
+export const analytics = getAnalytics(app);
 export const storage = getStorage(app);
