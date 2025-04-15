@@ -18,11 +18,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate OTP action
     if (action === "generate") {
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
       const expiresAt = new Date();
-      expiresAt.setMinutes(expiresAt.getMinutes() + 10); // 10 minutes expiration
+      expiresAt.setMinutes(expiresAt.getMinutes() + 10);
 
       const docRef = doc(collection(db, OTP_COLLECTION), email);
       await setDoc(docRef, {
@@ -32,7 +31,6 @@ export async function POST(req: NextRequest) {
         createdAt: serverTimestamp(),
       });
 
-      // Send email with Resend
       const { error } = await resend.emails.send({
         from: "StartupVista <noreply@startupvista.in>",
         to: email,
@@ -47,7 +45,7 @@ export async function POST(req: NextRequest) {
       });
 
       if (error) {
-        await deleteDoc(docRef); // Clean up if email fails
+        await deleteDoc(docRef);
         return NextResponse.json(
           { error: "Failed to send verification email" },
           { status: 500 }
@@ -57,7 +55,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true });
     }
     
-    // Verify OTP action
     else if (action === "verify") {
       if (!code) {
         return NextResponse.json(
@@ -79,27 +76,23 @@ export async function POST(req: NextRequest) {
       const otpData = docSnap.data();
       const now = Date.now();
       
-      // Check expiration
       if (now > otpData.expiresAt) {
-        await deleteDoc(docRef); // Clean up expired OTP
+        await deleteDoc(docRef);
         return NextResponse.json(
           { error: "Verification code has expired" },
           { status: 400 }
         );
       }
 
-      // Check attempts
       if (otpData.attempts >= 3) {
-        await deleteDoc(docRef); // Clean up after too many attempts
+        await deleteDoc(docRef);
         return NextResponse.json(
           { error: "Too many attempts. Please request a new code." },
           { status: 400 }
         );
       }
 
-      // Verify OTP
       if (otpData.code !== code) {
-        // Increment attempt count
         await setDoc(docRef, {
           ...otpData,
           attempts: otpData.attempts + 1
@@ -111,7 +104,6 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // Successful verification - clean up OTP
       await deleteDoc(docRef);
       
       return NextResponse.json({ 
