@@ -51,15 +51,15 @@ export default function AboutPage() {
     <div className="min-h-screen bg-[#F0F7FC]">
       {/* Hero Section */}
       <div className="w-full h-1/10">
-        <Image
-          src="/images/about.png"
-          alt="StartupVista About"
-          width={2000}
-          height={2000}
-          className="object-cover w-full"
-          priority
-        />
-      </div>
+         <Image
+           src="/images/about.svg"
+           alt="StartupVista About"
+           width={2000}
+           height={2000}
+           className="object-cover w-full"
+           priority
+         />
+       </div>
       
 
       {/* Main Content */}
