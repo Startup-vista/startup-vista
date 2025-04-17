@@ -197,15 +197,15 @@ body {
 
 /* =====  SHADCN OVERRIDES */
 .shad-primary-btn {
-  @apply bg-[#1C4BC6] text-white ;
+  @apply bg-[#1C4BC6] text-white cursor-pointer ;
 }
 
 .shad-danger-btn {
-  @apply bg-red-700 text-white ;
+  @apply bg-red-700 text-white cursor-pointer ;
 }
 
 .shad-gray-btn {
-  @apply border border-[#2E2E2E] cursor-pointer bg-white text-white ;
+  @apply border border-[#2E2E2E] cursor-pointer bg-white text-[#2E2E2E] cursor-pointer ;
 }
 
 .shad-input-label {

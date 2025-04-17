@@ -69,6 +69,7 @@ const RegisterForm = () => {
                 personalEmail: values.personalEmail,
                 designation: values.designation,
                 personalPhone: values.personalPhone,
+                personalName: values.personalName,
                 birthDate: values.birthDate,
                 gender: values.gender,
 
