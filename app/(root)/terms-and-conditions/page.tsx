@@ -14,8 +14,7 @@ export default function TermsAndConditionsPage() {
         
         {/* Effective Date */}
         <div className="mb-12 text-primary-300">
-          <p>Effective Date: [Insert Date]</p>
-          <p>Last Updated: [Insert Date]</p>
+          <p>Last Updated: 18th April 2025</p>
         </div>
 
         {/* Introduction */}
@@ -137,7 +136,7 @@ export default function TermsAndConditionsPage() {
           <Separator />
           <div className="space-y-6 text-[#2E2E2E] pt-6">
             <p>
-              These Terms are governed by the laws of [Insert Jurisdiction].
+              These Terms are governed by the laws of Mumbai Jurisdiction.
             </p>
           </div>
         </section>

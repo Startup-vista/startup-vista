@@ -34,13 +34,45 @@ export async function POST(req: NextRequest) {
       const { error } = await resend.emails.send({
         from: "StartupVista <noreply@startupvista.in>",
         to: email,
-        subject: "Your Verification Code",
+        subject: "Your Startupvista Verification Code",
         html: `
-          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2>Verification Code</h2>
-            <p>Your verification code is: <strong>${otp}</strong></p>
-            <p>This code will expire in 10 minutes.</p>
-          </div>
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333; line-height: 1.6; text-align: left;">
+              <h1 style="color: #1C4BC6; margin-bottom: 20px;">Thank you for signing up on <a href="https://startupvista.in" style="color: #1C4BC6; text-decoration: none;">Startupvista</a></h1>
+              
+              <p style="margin-bottom: 20px;">
+                The platform where startups take control of their own story.
+              </p>
+              
+              <p style="font-weight: bold; margin-bottom: 20px; color: #1C4BC6;">
+                To verify your email address, please use the OTP below:
+              </p>
+              
+              <div style="background: #f5f7ff; border: 2px solid #1C4BC6; border-radius: 8px; padding: 15px 20px; margin-bottom: 30px;">
+                <p style="margin: 0 0 8px 0; font-size: 14px; color: #666;">Your OTP:</p>
+                <p style="margin: 0; font-size: 24px; font-weight: bold; color: #1C4BC6; letter-spacing: 2px;">${otp}</p>
+              </div>
+              
+              <p style="margin-bottom: 15px;">
+                This OTP is valid for the next 10 minutes.<br>
+                Please do not share it with anyone.
+              </p>
+              
+              <p style="margin-bottom: 30px;">
+                If you did not request this verification, please ignore this email.
+              </p>
+              
+              <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+                <p style="margin: 5px 0;">
+                  <strong>Thank you,</strong>
+                </p>
+                <p style="margin: 5px 0; color: #1C4BC6; font-weight: bold;">
+                  Team Startupvista
+                </p>
+                <p style="margin: 5px 0;">
+                  <a href="https://startupvista.in" style="color: #1C4BC6; text-decoration: none;">www.startupvista.in</a>
+                </p>
+              </div>
+            </div>
         `,
       });
 
@@ -54,7 +86,7 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json({ success: true });
     }
-    
+
     else if (action === "verify") {
       if (!code) {
         return NextResponse.json(
@@ -65,7 +97,7 @@ export async function POST(req: NextRequest) {
 
       const docRef = doc(collection(db, OTP_COLLECTION), email);
       const docSnap = await getDoc(docRef);
-      
+
       if (!docSnap.exists()) {
         return NextResponse.json(
           { error: "No verification code found for this email" },
@@ -75,7 +107,7 @@ export async function POST(req: NextRequest) {
 
       const otpData = docSnap.data();
       const now = Date.now();
-      
+
       if (now > otpData.expiresAt) {
         await deleteDoc(docRef);
         return NextResponse.json(
@@ -97,7 +129,7 @@ export async function POST(req: NextRequest) {
           ...otpData,
           attempts: otpData.attempts + 1
         }, { merge: true });
-        
+
         return NextResponse.json(
           { error: "Invalid verification code" },
           { status: 400 }
@@ -105,13 +137,13 @@ export async function POST(req: NextRequest) {
       }
 
       await deleteDoc(docRef);
-      
-      return NextResponse.json({ 
+
+      return NextResponse.json({
         success: true,
-        message: "Email verified successfully" 
+        message: "Email verified successfully"
       });
     }
-    
+
     return NextResponse.json(
       { error: "Invalid action" },
       { status: 400 }

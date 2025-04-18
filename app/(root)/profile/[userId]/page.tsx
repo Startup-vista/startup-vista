@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/firebase'
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Frown } from 'lucide-react';
 //import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Image from 'next/image'
 import { NextPage } from 'next'
@@ -73,12 +73,25 @@ const OrganizationProfilePage: NextPage = () => {
         fetchUserData();
     }, [userId]);
 
+    const isFunded = userData?.fundingStage === 'Funding' ? "Yes" : "No";
+
     if (loading) {
-        return <div className="flex-center h-screen">Loading...</div>;
+        return (
+             <div className="flex items-center flex-center h-screen text-[#2e2e2e] gap-4 text-2xl font-bold">
+                <Image
+                    src="/icons/loader.svg"
+                    alt="loader"
+                    width={48}
+                    height={48}
+                    className="animate-spin"
+                />
+                Loading ...
+            </div>
+    );
     }
 
     if (!userData) {
-        return <div className="flex-center h-screen">User not found</div>;
+        return router.replace('/not-found');
     }
 
     return (
@@ -116,12 +129,6 @@ const OrganizationProfilePage: NextPage = () => {
                         {/* Company Name and Actions */}
                         <div className="mt-4">
                             <h1 className="text-3xl font-bold text-text-900">{userData.brandName}</h1>
-                            {userData.companyName && (
-                                <p className="text-lg text-text-600">{userData.companyName}</p>
-                            )}
-                            <p className="text-text-800">
-                                    {userData.designation} • {userData.personalName}
-                            </p>
 
                             {/* Action Buttons */}
                             <div className="flex items-center gap-3 mt-3">
@@ -186,8 +193,8 @@ const OrganizationProfilePage: NextPage = () => {
                                 </div>
 
                                 <div className="flex justify-between">
-                                    <span className="text-text-800">Funding</span>
-                                    <span className="text-text-800 font-medium">{userData.fundingStage}</span>
+                                    <span className="text-text-800">Funded</span>
+                                    <span className="text-text-800 font-medium">{isFunded}</span>
                                 </div>
 
                                 <div className="flex justify-between">
@@ -209,7 +216,7 @@ const OrganizationProfilePage: NextPage = () => {
 
                 {/* Funding Section */}
                 {userData.fundingStage === "Funding" && userData.fundingEntries && userData.fundingEntries.length > 0 && (
-                <div className="mt-10">
+                <div className="my-10">
                     <h2 className="font-bold text-2xl mb-4">Funding</h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -223,7 +230,7 @@ const OrganizationProfilePage: NextPage = () => {
 
                                 <div className="flex justify-between items-center mt-4">
                                     <div>
-                                        <div className="text-2xl font-bold">{card.fundingAmount.toLocaleString('en-IN')}</div>
+                                        <div className="text-2xl font-bold">****</div>
                                         <div className="text-sm text-gray-500">Amount</div>
                                     </div>
 

@@ -1,6 +1,8 @@
-// validation.ts
 import { z } from "zod";
 import { Gender, FundingStage, Industry, Registered, TeamSize, FundingType } from "@/constants";
+
+// Helper function to preprocess strings
+const preprocessString = (val: unknown) => typeof val === "string" ? val.trim() : val;
 
 // Password validation helpers
 const passwordValidation = {
@@ -20,55 +22,84 @@ const fundingStageNames = FundingStage.map(stage => stage.name);
 const industryNames = Industry.map(industry => industry.name);
 
 const FundingEntrySchema = z.object({
-  fundingName: z.string().min(1, "Required"),
+  fundingName: z.preprocess(
+    preprocessString,
+    z.string().min(1, "Venture/Investor name is required")
+  ),
   fundingType: z.enum(fundingTypeOptions),
   fundingDate: z.date(),
-  fundingAmount: z.string().regex(/^\d+$/, "Must be a number")
+  fundingAmount: z.preprocess(
+    preprocessString,
+    z.string().regex(/^\d+$/, "Must be a valid number")
+  )
 });
 
 // Common validations
-const emailValidation = z.string().email("Please enter a valid email address");
-const phoneValidation = z.string()
-  .refine((phone) => /^\+\d{10,15}$/.test(phone), {
-    message: "Please enter a valid phone number with country code (e.g. +1234567890)"
-  });
-const urlValidation = z.string()
-  .url("Please enter a valid URL")
-  .refine(url => url.startsWith("http://") || url.startsWith("https://"), {
-    message: "URL must start with http:// or https://"
-  });
+const emailValidation = z.preprocess(
+  preprocessString,
+  z.string().min(1, "Email is required").email("Please enter a valid email address")
+);
 
-export const UserFormValidation = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string()
-});
+const phoneValidation = z.preprocess(
+  preprocessString,
+  z.string()
+    .min(1, "Phone number is required")
+    .refine((phone) => /^\+\d{10,15}$/.test(phone), {
+      message: "Please enter a valid phone number with country code (e.g. +1234567890)"
+    })
+);
+
+const urlValidation = z.preprocess(
+  preprocessString,
+  z.string()
+    .min(1, "URL is required")
+    .url("Please enter a valid URL")
+    .refine(url => url.startsWith("http://") || url.startsWith("https://"), {
+      message: "URL must start with http:// or https://"
+    })
+);
 
 export const RegisterFormValidation = z.object({
   // Authentication fields
   companyEmail: emailValidation,
   personalEmail: emailValidation,
-  password: z.string()
-    .min(8, "Password must be at least 8 characters")
-    .max(20, "Password must be at most 20 characters")
-    .refine(passwordValidation.hasUpperCase, "Password must contain at least one uppercase letter")
-    .refine(passwordValidation.hasLowerCase, "Password must contain at least one lowercase letter")
-    .refine(passwordValidation.hasNumber, "Password must contain at least one number")
-    .refine(passwordValidation.hasSpecialChar, "Password must contain at least one special character"),
-  confirmPassword: z.string(),
+  password: z.preprocess(
+    preprocessString,
+    z.string()
+      .min(1, "Password is required")
+      .min(8, "Password must be at least 8 characters")
+      .max(20, "Password must be at most 20 characters")
+      .refine(passwordValidation.hasUpperCase, "Password must contain at least one uppercase letter")
+      .refine(passwordValidation.hasLowerCase, "Password must contain at least one lowercase letter")
+      .refine(passwordValidation.hasNumber, "Password must contain at least one number")
+      .refine(passwordValidation.hasSpecialChar, "Password must contain at least one special character")
+  ),
+  confirmPassword: z.preprocess(
+    preprocessString,
+    z.string().min(1, "Please confirm your password")
+  ),
 
   // Company registration fields
-  registered: z.enum(registeredOptions).optional(),
-  companyName: z.string()
-    .min(2, "Company name must be at least 2 characters")
-    .max(50, "Company name must be at most 50 characters")
-    .optional(),
-  personalName: z.string()
-    .min(2, "Company name must be at least 2 characters")
-    .max(50, "Company name must be at most 50 characters")
-    .optional(),
-  brandName: z.string()
-    .min(2, "Brand name must be at least 2 characters")
-    .max(50, "Brand name must be at most 50 characters"),
+  registered: z.enum(registeredOptions),
+  companyName: z.preprocess(
+    preprocessString,
+    z.string()
+      .min(2, "Company name must be at least 2 characters")
+      .max(50, "Company name must be at most 50 characters")
+      .optional()
+  ),
+  personalName: z.preprocess(
+    preprocessString,
+    z.string()
+      .min(2, "Name must be at least 2 characters")
+      .max(50, "Name must be at most 50 characters")
+  ),
+  brandName: z.preprocess(
+    preprocessString,
+    z.string()
+      .min(2, "Brand name must be at least 2 characters")
+      .max(50, "Brand name must be at most 50 characters")
+  ),
   establishedDate: z.coerce.date()
     .max(new Date(), "Established date cannot be in the future"),
   industry: z.string()
@@ -76,11 +107,15 @@ export const RegisterFormValidation = z.object({
       message: `Select from: ${industryNames.join(', ')}`
     }),
   teamSize: z.enum(teamSizeOptions),
-  aboutCompany: z.string()
-    .max(600, "Description must be at most 600 characters"),
+  aboutCompany: z.preprocess(
+    preprocessString,
+    z.string()
+      .max(600, "Description must be at most 600 characters")
+  ),
 
   // File uploads
   companyLogo: z.custom<File[]>()
+    .refine(files => files.length > 0, "Company logo is required")
     .refine(files => files.length <= 1, "You can upload only one file")
     .refine(files => !files.length || files[0].size <= 5 * 1024 * 1024, {
       message: "Max file size is 5MB"
@@ -103,9 +138,12 @@ export const RegisterFormValidation = z.object({
   fundingEntries: z.array(FundingEntrySchema).optional(),
 
   // Personal information
-  designation: z.string()
-    .min(2, "Designation must be at least 2 characters")
-    .max(50, "Designation must be at most 50 characters"),
+  designation: z.preprocess(
+    preprocessString,
+    z.string()
+      .min(2, "Designation must be at least 2 characters")
+      .max(50, "Designation must be at most 50 characters")
+  ),
   personalPhone: phoneValidation,
   birthDate: z.coerce.date()
     .max(new Date(), "Birth date cannot be in the future")
@@ -151,33 +189,38 @@ export const RegisterFormValidation = z.object({
     errorMap: () => ({ message: "You must accept the terms and conditions" })
   })
 })
-  // Password confirmation check
-  .refine(data => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"]
-  })
-  // Conditional validations
-  .superRefine((data, ctx) => {
-    // Company registration validation
-    if (data.registered === "Yes" && !data.companyName) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Company name is required when registered",
-        path: ["companyName"]
-      });
-    }
-    if (data.personalEmail === data.companyEmail) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Personal email must be different from company email",
-        path: ["personalEmail"]
-      });
-    }
-    if (data.registered === "Yes" && (!data.incorporationCertificate || data.incorporationCertificate.length === 0)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Incorporation certificate is required for registered companies",
-        path: ["incorporationCertificate"]
-      });
-    }
-  });
+.refine(data => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"]
+})
+.superRefine((data, ctx) => {
+  if (data.registered === "Yes" && !data.companyName) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Company name is required when registered",
+      path: ["companyName"]
+    });
+  }
+  if (data.personalEmail === data.companyEmail) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Personal email must be different from company email",
+      path: ["personalEmail"]
+    });
+  }
+  if (data.registered === "Yes" && (!data.incorporationCertificate || data.incorporationCertificate.length === 0)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Incorporation certificate is required for registered companies",
+      path: ["incorporationCertificate"]
+    });
+  }
+});
+
+export const UserFormValidation = z.object({
+  email: emailValidation,
+  password: z.preprocess(
+    preprocessString,
+    z.string().min(1, "Password is required")
+  )
+});

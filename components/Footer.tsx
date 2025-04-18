@@ -1,14 +1,9 @@
 import Link from "next/link"
-import { Button } from "./ui/button"
-import { Input } from "./ui/input"
 import { Separator } from "./ui/separator"
-import { Card } from "./ui/card"
 
 export const Footer = () => {
   const companyLinks = [
     { name: "About Us", href: "/about-us" },
-    { name: "Meet the Team", href: "/team" },
-    { name: "Careers", href: "/careers" },
     { name: "Contact Us", href: "/contact-us" },
   ]
 
@@ -20,8 +15,7 @@ export const Footer = () => {
   ]
 
   const resourceLinks = [
-    { name: "Blog", href: "/blog" },
-    { name: "Help Center", href: "/help" },
+    { name: "Blogs", href: "/blogs" },
   ]
 
   const socialLinks = [
@@ -109,16 +103,9 @@ export const Footer = () => {
 
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
-            <Link href="/" className="flex items-center gap-5">
-              <img 
-                src="/images/logo.png" 
-                alt="StartupVista Logo" 
-                className="h-8 cursor-pointer"
-              />
               <span className="ml-2 text-sm text-secondary-600">
                 © {new Date().getFullYear()} StartupVista. All rights reserved.
               </span>
-            </Link>
           </div>
 
           <div className="flex space-x-6">
