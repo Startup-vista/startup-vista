@@ -406,7 +406,7 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.PHONE_INPUT}
                         control={form.control}
                         name="personalPhone"
-                        label="Phone Number*"
+                        label="Phone Number"
                         placeholder="Enter your phone number"
                     />
                 </div>
