@@ -47,6 +47,7 @@ const phoneValidation = z.preprocess(
     .refine((phone) => /^\+\d{10,15}$/.test(phone), {
       message: "Please enter a valid phone number with country code (e.g. +1234567890)"
     })
+  .optional()
 );
 
 const urlValidation = z.preprocess(
