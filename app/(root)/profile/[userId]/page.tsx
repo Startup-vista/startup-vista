@@ -196,11 +196,6 @@ const OrganizationProfilePage: NextPage = () => {
                                     <span className="text-text-800">Funded</span>
                                     <span className="text-text-800 font-medium">{isFunded}</span>
                                 </div>
-
-                                <div className="flex justify-between">
-                                    <span className="text-text-800">Registered</span>
-                                    <span className="text-text-800 font-medium">{userData.registered}</span>
-                                </div>
                             </div>
                         </div>
                     </div>
