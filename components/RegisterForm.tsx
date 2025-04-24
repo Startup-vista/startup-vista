@@ -486,7 +486,7 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
                         name="instagram"
-                        label="Instagram"
+                        label="Instagram*"
                         placeholder="Enter your Instagram link"
                     />
                 </div>
@@ -495,14 +495,14 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
                         name="x"
-                        label="X"
+                        label="X*"
                         placeholder="Enter your X link"
                     />
                     <CustomFormField
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
                         name="facebook"
-                        label="FaceBook"
+                        label="FaceBook*"
                         placeholder="Enter your FaceBook link"
                     />
                 </div>

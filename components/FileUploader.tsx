@@ -34,8 +34,8 @@ const FileUploader = ({ files, onChange, accept }: FileUploaderProps) => {
                         <Image
                             src={convertFileToUrl(files[0])}
                             alt="uploaded file"
-                            width={100}
-                            height={100}
+                            width={500}
+                            height={500}
                             className="max-h-[400px] overflow-hidden object-cover"
                         />
                     ) : (

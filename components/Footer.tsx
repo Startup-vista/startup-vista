@@ -19,10 +19,10 @@ export const Footer = () => {
   ]
 
   const socialLinks = [
-    { name: "Twitter", href: "https://twitter.com", icon: "/icons/x.svg" },
+    { name: "Twitter", href: "https://x.com/StartupVista_in?t=Xft-AIqK15_LbKcAfXv7FA&s=08", icon: "/icons/x.svg" },
     { name: "Facebook", href: "https://facebook.com", icon: "/icons/meta.svg" },
-    { name: "Instagram", href: "https://instagram.com", icon: "/icons/instagram.svg" },
-    { name: "LinkedIn", href: "https://linkedin.com", icon: "/icons/linkedin.svg" },
+    { name: "Instagram", href: "https://startupvista.in", icon: "/icons/instagram.svg" },
+    { name: "LinkedIn", href: "https://www.linkedin.com/company/startupvista/", icon: "/icons/linkedin.svg" },
   ]
 
   return (

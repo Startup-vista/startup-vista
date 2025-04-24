@@ -5,6 +5,8 @@ export const Industry = [
     { name: "Automobile startups" },
     { name: "Health care" },
     { name: "Edtech" },
+    { name: "Business Consultancy" },
+    { name: "IT Service & Consulting" },
     { name: "FMCG" },
     { name: "Gaming" },
     { name: "Tech startups" },
