@@ -168,7 +168,8 @@ export const RegisterFormValidation = z.object({
   linkedin: urlValidation
     .refine(url => url.includes("linkedin.com"), {
       message: "Please enter a valid LinkedIn URL"
-    }),
+    })
+    .optional(),
   instagram: urlValidation
     .refine(url => url.includes("instagram.com"), {
       message: "Please enter a valid Instagram URL"

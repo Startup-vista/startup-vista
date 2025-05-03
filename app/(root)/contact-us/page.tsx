@@ -11,6 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import Image from 'next/image';
 
 const formSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters"),
@@ -48,9 +50,9 @@ export default function ContactPage() {
       answer: (
         <>
           We’d love to hear your ideas! Please fill the Contact Form by clicking{" "}
-          <a 
-            href="https://forms.gle/CRXNmyXu2T8dSUpQA" 
-            target="_blank" 
+          <a
+            href="https://forms.gle/CRXNmyXu2T8dSUpQA"
+            target="_blank"
             rel="noopener noreferrer"
             className="text-[#1C4BC6] hover:underline"
           >
@@ -76,9 +78,9 @@ export default function ContactPage() {
       answer: (
         <>
           We welcome your thoughts! Just fill out {" "}
-          <a 
-            href="https://forms.gle/CRXNmyXu2T8dSUpQA" 
-            target="_blank" 
+          <a
+            href="https://forms.gle/CRXNmyXu2T8dSUpQA"
+            target="_blank"
             rel="noopener noreferrer"
             className="text-[#1C4BC6] hover:underline"
           >
@@ -102,9 +104,29 @@ export default function ContactPage() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    // Handle form submission
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const response = await fetch('/api/contact-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit form');
+      }
+
+      // Show success message
+      toast.success('Your message has been sent successfully!');
+      form.reset();
+    } catch (error) {
+      toast.error('Failed to submit form. Please try again.');
+      console.error('Submission error:', error);
+    }
   }
 
   const isStartup = form.watch("isStartup") === "yes";
@@ -114,46 +136,12 @@ export default function ContactPage() {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="items-center justify-center w-fit mb-12">
-                    <h1 className="text-4xl md:text-5xl font-bold text-text-800">Contact Us</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-text-800">Contact Us</h1>
         </div>
-        {/* FAQ Section */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold text-[#0D0D0D] w-fit border-b-5 border-[#1C4BC6]">FAQs for Startups&nbsp;&nbsp;&nbsp;</h2>
-          <Separator />
-          <Accordion type="single" collapsible className="w-full mb-12 pt-6">
-            {faqsStartups.map((faq, index) => (
-              <AccordionItem value={`item-${index}`} key={index}>
-                <AccordionTrigger className="text-left hover:no-underline cursor-pointer text-[#1C4BC6] font-medium">
-                  {faq.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-[#2E2E2E]">
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-
-          <h2 className="text-3xl font-bold text-[#0D0D0D] w-fit border-b-5 border-[#1C4BC6]">FAQs for Users/Viewers&nbsp;&nbsp;&nbsp;</h2>
-          <Separator />
-          <Accordion type="single" collapsible className="w-full pt-6">
-            {faqsUsers.map((faq, index) => (
-              <AccordionItem value={`user-item-${index}`} key={`user-${index}`}>
-                <AccordionTrigger className="text-left hover:no-underline cursor-pointer text-[#1C4BC6] font-medium">
-                  {faq.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-[#2E2E2E]">
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </section>
-
-        {/* Contact Form Section */}
         <section>
-          <h2 className="text-3xl font-bold text-[#0D0D0D] w-fit border-b-5 border-[#1C4BC6]">Your Message</h2>
+          <h2 className="text-3xl font-bold text-[#0D0D0D] w-fit border-b-5 border-[#1C4BC6]">Your Message&nbsp;&nbsp;&nbsp;</h2>
           <Separator />
-          <Card className="p-6 border-[#CEE0F6] bg-white mt-12">
+          <Card className="p-6 border-[#CEE0F6] bg-white my-12">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -206,10 +194,10 @@ export default function ContactPage() {
                     <FormItem>
                       <FormLabel>Brief Explanation*</FormLabel>
                       <FormControl>
-                        <Textarea 
-                          placeholder="Please explain your request in detail" 
-                          className="min-h-[120px]" 
-                          {...field} 
+                        <Textarea
+                          placeholder="Please explain your request in detail"
+                          className="min-h-[120px]"
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage className="text-xs text-red-500" />
@@ -226,7 +214,7 @@ export default function ContactPage() {
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
-                          defaultValue={field.value}
+                          defaultValue="no"
                           className="flex space-x-4"
                         >
                           <FormItem className="flex items-center space-x-2 space-y-0">
@@ -264,12 +252,59 @@ export default function ContactPage() {
                   />
                 )}
 
-                <Button type="submit" className="w-full text-white cursor-pointer bg-[#1C4BC6] hover:bg-[#1a3fb0]">
-                  Submit
+                <Button
+                  type="submit"
+                  disabled={form.formState.isSubmitting}
+                  className={"cursor-pointer shad-primary-btn w-full"}
+                >
+                  {form.formState.isSubmitting ? (
+                    <div className="flex items-center gap-4">
+                      <Image
+                        src="/icons/loader.svg"
+                        alt="loader"
+                        width={24}
+                        height={24}
+                        className="animate-spin"
+                      />
+                      Loading ...
+                    </div>
+                  ) : "Submit"}
                 </Button>
               </form>
             </Form>
           </Card>
+        </section>
+        {/* FAQ Section */}
+        <section className="mb-16">
+          <h2 className="text-3xl font-bold text-[#0D0D0D] w-fit border-b-5 border-[#1C4BC6]">FAQs for Startups&nbsp;&nbsp;&nbsp;</h2>
+          <Separator />
+          <Accordion type="single" collapsible className="w-full mb-12 pt-6">
+            {faqsStartups.map((faq, index) => (
+              <AccordionItem value={`item-${index}`} key={index}>
+                <AccordionTrigger className="text-left hover:no-underline cursor-pointer text-[#1C4BC6] font-medium">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-[#2E2E2E]">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+
+          <h2 className="text-3xl font-bold text-[#0D0D0D] w-fit border-b-5 border-[#1C4BC6]">FAQs for Users/Viewers&nbsp;&nbsp;&nbsp;</h2>
+          <Separator />
+          <Accordion type="single" collapsible className="w-full pt-6">
+            {faqsUsers.map((faq, index) => (
+              <AccordionItem value={`user-item-${index}`} key={`user-${index}`}>
+                <AccordionTrigger className="text-left hover:no-underline cursor-pointer text-[#1C4BC6] font-medium">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-[#2E2E2E]">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </section>
       </div>
     </div>

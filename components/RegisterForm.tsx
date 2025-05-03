@@ -173,7 +173,7 @@ const RegisterForm = () => {
                         label="Company Logo*"
                         renderSkeleton={(field) => (
                             <FormControl>
-                                <FileUploader files={field.value} onChange={field.onChange} accept={{ 'image/*': ['.png', '.jpg', '.jpeg', '.webp'] }} />
+                                <FileUploader files={field.value} onChange={field.onChange} fileType="logo" accept={{ 'image/*': ['.png', '.jpg', '.jpeg', '.webp'] }} />
                             </FormControl>
                         )}
                     />
@@ -210,7 +210,7 @@ const RegisterForm = () => {
                             label="Certificate of incorporation"
                             renderSkeleton={(field) => (
                                 <FormControl>
-                                    <FileUploader files={field.value} onChange={field.onChange} accept={{ 'application/pdf': ['.pdf'] }} />
+                                    <FileUploader files={field.value} onChange={field.onChange} fileType="document" accept={{ 'application/pdf': ['.pdf'] }} />
                                 </FormControl>
                             )}
                         />
@@ -486,7 +486,7 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
                         name="instagram"
-                        label="Instagram"
+                        label="Instagram*"
                         placeholder="Enter your Instagram link"
                     />
                 </div>
@@ -495,14 +495,14 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
                         name="x"
-                        label="X"
+                        label="X*"
                         placeholder="Enter your X link"
                     />
                     <CustomFormField
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
                         name="facebook"
-                        label="FaceBook"
+                        label="FaceBook*"
                         placeholder="Enter your FaceBook link"
                     />
                 </div>
