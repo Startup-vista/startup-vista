@@ -10,7 +10,6 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import {ArrowRightIcon, CheckCircleIcon, Loader2, RocketIcon} from "lucide-react";
-import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import FileUploader from "@/components/FileUploader";
 import {addDoc, collection, doc, getDoc, serverTimestamp} from "firebase/firestore";
@@ -22,6 +21,11 @@ import Image from "next/image";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {PostCategory} from "@/constants";
 import Link from "next/link";
+import dynamic from 'next/dynamic';
+
+const ReactQuill = dynamic(() => import('react-quill-new'), {
+  ssr: false,
+});
 
 type PostData = {
     title: string;
