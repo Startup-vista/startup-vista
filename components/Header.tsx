@@ -13,9 +13,11 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { auth } from "@/firebase"
 import { onAuthStateChanged, signOut } from "firebase/auth"
-import { authService } from "@/services/authService"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { doc, getDoc } from "firebase/firestore"
+import { db } from "@/firebase"
+import {EditIcon} from "lucide-react";
 
 const navItems = ['Founder Stories', 'Finance', 'Industry Insights', 'Growth'];
 
@@ -24,20 +26,29 @@ export function Header() {
     const [user, setUser] = useState<any>(null);
     const [isVerified, setIsVerified] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [companyLogo, setCompanyLogo] = useState<string | null>(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 try {
-                    const isVerified = await authService.checkUserVerification(user.uid);
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    const isVerified = userDoc.exists() ? userDoc.data()?.isVerified : false;
                     setIsVerified(isVerified);
-                    setUser({
+
+                    const userData = {
                         uid: user.uid,
                         email: user.email,
                         displayName: user.displayName,
                         photoURL: user.photoURL,
                         isVerified
-                    });
+                    };
+
+                    if (userDoc.exists() && userDoc.data()?.companyLogo) {
+                        setCompanyLogo(userDoc.data()?.companyLogo);
+                    }
+
+                    setUser(userData);
                 } catch (error) {
                     console.error("Error checking verification:", error);
                     await handleSignOut();
@@ -45,6 +56,7 @@ export function Header() {
             } else {
                 setUser(null);
                 setIsVerified(false);
+                setCompanyLogo(null);
             }
             setLoading(false);
         });
@@ -57,6 +69,7 @@ export function Header() {
             await signOut(auth);
             setUser(null);
             setIsVerified(false);
+            setCompanyLogo(null);
             router.push("/");
         } catch (error) {
             toast.error("Failed to sign out");
@@ -68,23 +81,38 @@ export function Header() {
             toast.error("Please verify your account to access profile");
             return;
         }
-        router.push("/profile");
+        router.push(`/profile/${user.uid}`);
     };
 
     return (
         <nav className="sticky top-0 z-50 border-b bg-primary-200">
             <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="flex h-16 items-center justify-between">
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center text-xl font-bold">
-                        <Image
-                            alt="logo"
-                            src="/images/logo.png"
-                            width={200}
-                            height={100}
-                            className="w-40 md:w-48"
-                        />
-                    </Link>
+                    {/* Logo and Write Post Button */}
+                    <div className="flex items-center gap-4">
+                        <Link href="/" className="flex items-center text-xl font-bold">
+                            <Image
+                                alt="logo"
+                                src="/images/logo.png"
+                                width={200}
+                                height={100}
+                                className="w-40 md:w-48"
+                            />
+                        </Link>
+
+                        {user && isVerified && (
+                            <Button
+                                asChild
+                                variant="ghost"
+                                className="hidden md:flex h-10 text-base font-bold text-primary-500 hover:underline"
+                            >
+                                <Link href="/start-up/create-post">
+                                    <EditIcon className="w-5 h-5" />
+                                    Write Post
+                                </Link>
+                            </Button>
+                        )}
+                    </div>
 
                     {/* Desktop Navigation */}
                     {/* <div className="hidden md:flex md:items-center md:space-x-8">
@@ -112,12 +140,21 @@ export function Header() {
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" className="relative cursor-pointer h-10 w-10 rounded-full">
-                                        <Avatar className="h-10 w-10">
-                                            <AvatarImage src={user.photoURL || "/default-avatar.jpg"} alt="User" />
-                                            <AvatarFallback>
-                                                {user.email?.charAt(0).toUpperCase()}
-                                            </AvatarFallback>
-                                        </Avatar>
+                                        {companyLogo ? (
+                                            <Image
+                                                src={companyLogo}
+                                                alt="Company Logo"
+                                                fill
+                                                className="rounded-full"
+                                            />
+                                        ) : (
+                                            <Avatar className="h-10 w-10">
+                                                <AvatarImage src={user.photoURL || "/default-avatar.jpg"} alt="User" />
+                                                <AvatarFallback>
+                                                    {user.email?.charAt(0).toUpperCase()}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                        )}
                                         {!isVerified && (
                                             <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500"></span>
                                         )}
@@ -130,16 +167,16 @@ export function Header() {
                                         </DropdownMenuItem>
                                     )}
                                     <DropdownMenuItem>
-                                        <Link href="/create-post" className="w-full">Create a Post</Link>
+                                        <Link href="/start-up/create-post" className="w-full cursor-pointer">Write a Post</Link>
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={handleProfileClick}>
+                                    <DropdownMenuItem onClick={handleProfileClick} className="cursor-pointer">
                                         Profile
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <Link href="/settings" className="w-full">Settings</Link>
-                                    </DropdownMenuItem>
+                                    {/*<DropdownMenuItem>*/}
+                                    {/*    <Link href="/settings" className="w-full cursor-pointer">Settings</Link>*/}
+                                    {/*</DropdownMenuItem>*/}
                                     <DropdownMenuItem onClick={handleSignOut}>
-                                        <span className="w-full text-left">Logout</span>
+                                        <span className="w-full text-left cursor-pointer">Logout</span>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>

@@ -107,11 +107,7 @@ function generateConfirmationEmailHTML({ name, summary }: any) {
         Our team will review your request and get back to you as soon as possible.
         For technical issues, we typically respond within 24-48 hours.
       </p>
-      
-      <p style="margin-bottom: 30px;">
-        If you need to add any additional information, please reply to this email.
-      </p>
-      
+  
       <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
         <p style="margin: 5px 0;">
           <strong>Thank you,</strong>

@@ -173,7 +173,7 @@ const RegisterForm = () => {
                         label="Company Logo*"
                         renderSkeleton={(field) => (
                             <FormControl>
-                                <FileUploader files={field.value} onChange={field.onChange} accept={{ 'image/*': ['.png', '.jpg', '.jpeg', '.webp'] }} />
+                                <FileUploader files={field.value} onChange={field.onChange} fileType="logo" accept={{ 'image/*': ['.png', '.jpg', '.jpeg', '.webp'] }} />
                             </FormControl>
                         )}
                     />
@@ -210,7 +210,7 @@ const RegisterForm = () => {
                             label="Certificate of incorporation"
                             renderSkeleton={(field) => (
                                 <FormControl>
-                                    <FileUploader files={field.value} onChange={field.onChange} accept={{ 'application/pdf': ['.pdf'] }} />
+                                    <FileUploader files={field.value} onChange={field.onChange} fileType="document" accept={{ 'application/pdf': ['.pdf'] }} />
                                 </FormControl>
                             )}
                         />

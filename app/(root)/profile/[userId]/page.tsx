@@ -3,10 +3,8 @@
 import { useEffect, useState } from 'react'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/firebase'
-import { ExternalLink, Frown } from 'lucide-react';
-//import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ExternalLink } from 'lucide-react';
 import Image from 'next/image'
-import { NextPage } from 'next'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link';
 import { formatFirestoreDate } from '@/lib/utils';
@@ -44,7 +42,7 @@ interface UserData {
     gender: string
 }
 
-const OrganizationProfilePage: NextPage = () => {
+const OrganizationProfilePage = () => {
     const [userData, setUserData] = useState<UserData>();
     const [loading, setLoading] = useState(true);
     const router = useRouter();
@@ -139,14 +137,14 @@ const OrganizationProfilePage: NextPage = () => {
                                 {userData.androidLink && (
                                 <button className="w-10 h-10 rounded-full bg-white  border border-text-800 flex-center">
                                     <Link href={userData?.androidLink} className="w-10 h-10 rounded-full flex-center">
-                                        <Image src="/icons/android.svg" alt="LinkedIn" width={20} height={20} />
+                                        <Image src="/icons/android.svg" alt="android" width={20} height={20} />
                                     </Link>
                                 </button>
                                 )}
                                 {userData.iosLink && (
                                 <button className="w-10 h-10 rounded-full bg-white  border border-text-800 flex-center">
                                     <Link href={userData?.iosLink} className="w-10 h-10 rounded-full flex-center">
-                                        <Image src="/icons/ios.svg" alt="LinkedIn" width={20} height={20} />
+                                        <Image src="/icons/ios.svg" alt="ios" width={20} height={20} />
                                     </Link>
                                 </button>
                                 )}
@@ -164,12 +162,12 @@ const OrganizationProfilePage: NextPage = () => {
                                 )}
                                 {userData.x && (
                                 <Link href={userData.x} className="w-10 h-10 flex-center">
-                                    <Image src="https://upload.wikimedia.org/wikipedia/commons/5/57/X_logo_2023_%28white%29.png" alt="Facebook" width={28} height={28} />
+                                    <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/X_logo.jpg/1200px-X_logo.jpg" alt="Twitter" width={28} height={28} />
                                 </Link>
                                 )}
                                 {userData.facebook && (
                                 <Link href={userData.facebook} className="w-10 h-10 flex-center">
-                                    <Image src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Twitter" width={28} height={28} />
+                                    <Image src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" width={28} height={28} />
                                 </Link>
                                 )}
                             </div>
@@ -183,7 +181,7 @@ const OrganizationProfilePage: NextPage = () => {
 
                             <div className="space-y-3">
                                 <div className="flex justify-between">
-                                    <span className="text-text-800">Founded</span>
+                                    <span className="text-text-800">Established</span>
                                     <span className="text-text-800 font-medium">{formatFirestoreDate(userData.establishedDate)}</span>
                                 </div>
 
