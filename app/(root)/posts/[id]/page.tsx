@@ -148,15 +148,8 @@ export default function BlogPostPage() {
 
     if (loading) {
         return (
-            <div className="flex items-center flex-center h-screen text-[#2e2e2e] gap-4 text-2xl font-bold">
-                <Image
-                    src="/icons/loader.svg"
-                    alt="loader"
-                    width={48}
-                    height={48}
-                    className="animate-spin"
-                />
-                Loading ...
+            <div className="min-h-screen bg-primary-200 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
             </div>
         );
     }
