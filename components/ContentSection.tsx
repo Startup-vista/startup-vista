@@ -100,8 +100,6 @@ const CardItem: React.FC<{ card: CardItem; large?: boolean }> = ({ card, large =
                     <span className="text-xs font-medium text-text-600 hover:underline">{card.brandName}</span>
                   </Link>
                   <span className="text-xs text-secondary-300 mx-2">•</span>
-                  <span className="text-xs text-secondary-300">{card.createdAt}</span>
-                  <span className="text-xs text-secondary-300 mx-2">•</span>
                   <div className="flex items-center text-xs text-secondary-400">
                     <Eye className="h-3 w-3 mr-1" />
                     <span>{formatViews(card.views)} views</span>
@@ -125,3 +123,5 @@ const CardItem: React.FC<{ card: CardItem; large?: boolean }> = ({ card, large =
 };
 
 export default ContentSection;
+
+//<span className="text-xs text-secondary-300 items-end">{card.createdAt}</span>
