@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import {ArrowRightIcon, CheckCircleIcon, Loader2, RocketIcon} from "lucide-react";
+import {ArrowRightIcon, Loader2} from "lucide-react";
 import 'react-quill-new/dist/quill.snow.css';
 import FileUploader from "@/components/FileUploader";
 import {addDoc, collection, doc, getDoc, serverTimestamp} from "firebase/firestore";
