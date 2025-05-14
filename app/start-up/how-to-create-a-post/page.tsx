@@ -95,7 +95,7 @@ export default function ArticleGuidePage() {
                                 <li>Sign up or log in with your email ID or Google account</li>
                             </ul>
                             <Image
-                                src="/images/chatgpt-login-example.jpg"
+                                src="/images/article-guide-1.png"
                                 alt="ChatGPT Login Example"
                                 width={600}
                                 height={400}
@@ -116,7 +116,7 @@ export default function ArticleGuidePage() {
                                 <li>This will open a fresh conversation where you can feed your data</li>
                             </ul>
                             <Image
-                                src="/images/chatgpt-login-example.jpg"
+                                src="/images/article-guide-2.png"
                                 alt="ChatGPT Login Example"
                                 width={600}
                                 height={400}
@@ -140,7 +140,7 @@ export default function ArticleGuidePage() {
                                 <li>Once done, save it as a document (Word or PDF)</li>
                             </ul>
                             <Image
-                                src="/images/chatgpt-login-example.jpg"
+                                src="/images/article-guide-3.png"
                                 alt="ChatGPT Login Example"
                                 width={600}
                                 height={400}
@@ -164,7 +164,7 @@ export default function ArticleGuidePage() {
                                 "Save all the information provided in this conversation as structured data, including company name, industry, description, and key details for future reference when creating articles."
                             </div>
                             <Image
-                                src="/images/chatgpt-login-example.jpg"
+                                src="/images/article-guide-4.png"
                                 alt="ChatGPT Login Example"
                                 width={600}
                                 height={400}
@@ -194,7 +194,7 @@ export default function ArticleGuidePage() {
                                 ))}
                             </div>
                             <Image
-                                src="/images/chatgpt-login-example.jpg"
+                                src="/images/article-guide-5.png"
                                 alt="ChatGPT Login Example"
                                 width={600}
                                 height={400}
@@ -216,7 +216,7 @@ export default function ArticleGuidePage() {
                                 <li>Example: If you chose Funding, answer funding-related questions</li>
                             </ul>
                             <Image
-                                src="/images/chatgpt-login-example.jpg"
+                                src="/images/article-guide-6.png"
                                 alt="ChatGPT Login Example"
                                 width={600}
                                 height={400}
@@ -240,7 +240,7 @@ export default function ArticleGuidePage() {
                                 "Using the information provided above, write a well-structured, engaging article under the category of [insert category]. The article should be SEO-friendly, approximately 800-1000 words, with an attention-grabbing headline, clear sections with subheadings, and a compelling conclusion. Include relevant statistics or examples where appropriate."
                             </div>
                             <Image
-                                src="/images/chatgpt-login-example.jpg"
+                                src="/images/article-guide-7.png"
                                 alt="ChatGPT Login Example"
                                 width={600}
                                 height={400}
@@ -262,7 +262,7 @@ export default function ArticleGuidePage() {
                                 <li>Post your article on StartupVista</li>
                             </ul>
                             <Image
-                                src="/images/chatgpt-login-example.jpg"
+                                src="/images/article-guide-8.png"
                                 alt="ChatGPT Login Example"
                                 width={600}
                                 height={400}

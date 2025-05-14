@@ -20,8 +20,8 @@ export const Footer = () => {
 
   const socialLinks = [
     { name: "Twitter", href: "https://x.com/StartupVista_in?t=Xft-AIqK15_LbKcAfXv7FA&s=08", icon: "/icons/x.svg" },
-    { name: "Facebook", href: "https://facebook.com", icon: "/icons/meta.svg" },
-    { name: "Instagram", href: "https://startupvista.in", icon: "/icons/instagram.svg" },
+    { name: "Youtube", href: "https://youtube.com/@startupvista?si=Wx_GXIuo3fhjd6sG", icon: "/icons/meta.svg" },
+    { name: "Instagram", href: "https://instagram.com/startupvista.in", icon: "/icons/instagram.svg" },
     { name: "LinkedIn", href: "https://www.linkedin.com/company/startupvista/", icon: "/icons/linkedin.svg" },
   ]
 
