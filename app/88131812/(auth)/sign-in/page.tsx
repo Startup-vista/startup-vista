@@ -82,7 +82,7 @@ export default function AdminLogin() {
                             fieldType={FormFieldType.PWD}
                         />
 
-                        <Button type="submit" className="w-full cursor-pointer" disabled={isLoading}>
+                        <Button type="submit" className="w-full cursor-pointer bg-primary-500 text-white" disabled={isLoading}>
                             {isLoading ? "Signing in..." : "Sign In"}
                         </Button>
                     </form>
