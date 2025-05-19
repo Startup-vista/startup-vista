@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import { doc, getDoc } from 'firebase/firestore'
-import { db } from '@/firebase'
+import {auth, db} from '@/firebase'
 import {ExternalLink} from 'lucide-react';
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link';
 import { formatFirestoreDateAdmin } from '@/lib/utils';
+import {onAuthStateChanged} from "firebase/auth";
 
 interface FundingEntry {
     fundingName: string
@@ -50,6 +51,37 @@ const OrganizationProfilePage = () => {
     const router = useRouter();
     const { userId } = useParams();
 
+    const [isVerified, setIsVerified] = useState<boolean | null>(null);
+    const [loadingAuth, setLoadingAuth] = useState(true);
+    const [userID, setUserID] = useState<string | null>(null);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await getDoc(doc(db, "admins", user.uid));
+                    if (userDoc.exists()) {
+                        setUserID(user.uid);
+                        setIsVerified(userDoc.data().isVerified);
+                    } else {
+                        setUserID(null);
+                        setIsVerified(false);
+                    }
+                } catch (error) {
+                    console.error("Error checking user verification:", error);
+                    setIsVerified(false);
+                }
+            } else {
+                setIsVerified(false);
+                setUserID(null);
+            }
+            setLoadingAuth(false);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+
     useEffect(() => {
         const fetchUserData = async () => {
             if (!userId) return;
@@ -72,7 +104,6 @@ const OrganizationProfilePage = () => {
         fetchUserData();
     }, [userId]);
 
-    const isFunded = userData?.fundingStage === 'Funding' ? "Yes" : "No";
     const isRegistered = userData?.registered === 'Yes' ? "Yes" : "No";
 
     if (loading) {
@@ -81,6 +112,18 @@ const OrganizationProfilePage = () => {
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
             </div>
         );
+    }
+
+    if (loadingAuth) {
+        return (
+            <div className="min-h-screen bg-primary-200 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
+            </div>
+        );
+    }
+
+    if (!isVerified || !userId) {
+        router.replace("/88131812/sign-in");
     }
 
     if (!userData) {

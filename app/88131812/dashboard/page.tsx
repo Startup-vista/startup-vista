@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { collection, query, getDocs, doc, updateDoc, deleteDoc, addDoc } from "firebase/firestore";
+import {collection, query, getDocs, doc, updateDoc, deleteDoc, addDoc, getDoc} from "firebase/firestore";
 import { db } from "@/firebase";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,8 +41,9 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { deleteUser as deleteAuthUser } from "firebase/auth";
+import {deleteUser as deleteAuthUser, onAuthStateChanged} from "firebase/auth";
 import { auth } from "@/firebase";
+import {useRouter} from "next/navigation";
 
 interface User {
     id: string;
@@ -68,6 +69,7 @@ interface RejectionData extends Omit<User, 'id'> {
 }
 
 export default function AdminDashboard() {
+    const router = useRouter();
     const [regularUsers, setRegularUsers] = useState<User[]>([]);
     const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
     const [loading, setLoading] = useState(true);
@@ -76,6 +78,36 @@ export default function AdminDashboard() {
     const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
     const [rejectingUser, setRejectingUser] = useState<User | null>(null);
     const [rejectionReason, setRejectionReason] = useState("");
+
+    const [isVerified, setIsVerified] = useState<boolean | null>(null);
+    const [loadingAuth, setLoadingAuth] = useState(true);
+    const [userId, setUserId] = useState<string | null>(null);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await getDoc(doc(db, "admins", user.uid));
+                    if (userDoc.exists()) {
+                        setUserId(user.uid);
+                        setIsVerified(userDoc.data().isVerified);
+                    } else {
+                        setUserId(null);
+                        setIsVerified(false);
+                    }
+                } catch (error) {
+                    console.error("Error checking user verification:", error);
+                    setIsVerified(false);
+                }
+            } else {
+                setIsVerified(false);
+                setUserId(null);
+            }
+            setLoadingAuth(false);
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const fetchUsers = async () => {
         try {
@@ -239,6 +271,18 @@ export default function AdminDashboard() {
         if (!timestamp?.toDate) return "N/A";
         return timestamp.toDate().toLocaleDateString();
     };
+
+    if (loadingAuth) {
+        return (
+            <div className="min-h-screen bg-primary-200 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
+            </div>
+        );
+    }
+
+    if (!isVerified || !userId) {
+        router.replace("/88131812/sign-in");
+    }
 
     return (
         <div className="container mx-auto py-8">
