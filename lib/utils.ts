@@ -1,6 +1,8 @@
 import { type ClassValue, clsx } from "clsx";
 import { Timestamp } from "firebase/firestore";
 import { twMerge } from "tailwind-merge";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "@/firebase";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -14,8 +16,24 @@ export function formatFirestoreDate(timestamp: Timestamp) {
   return `${month}, ${year}`;
 }
 
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "@/firebase";
+export function formatFirestoreDateAdmin(timestamp: Timestamp) {
+  if (!timestamp?.seconds) return "N/A";
+  const date = new Date(timestamp.seconds * 1000);
+  const day = date.toLocaleString('en-IN', { day: 'numeric' });
+  const month = date.toLocaleString('en-IN', { month: 'long' });
+  const year = date.getFullYear();
+  return ` ${day} ${month}, ${year}`;
+}
+
+export const formatViews = (views: number): string => {
+  if (views >= 1000000) {
+    return `${(views / 1000000).toFixed(1)}M`;
+  }
+  if (views >= 1000) {
+    return `${(views / 1000).toFixed(1)}k`;
+  }
+  return views.toString();
+};
 
 export const convertFileToUrl = (file: File) => URL.createObjectURL(file);
 

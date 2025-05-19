@@ -1,13 +1,15 @@
 "use client"
 
 import { useEffect, useState } from 'react'
-import { doc, getDoc } from 'firebase/firestore'
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore'
 import { db } from '@/firebase'
-import { ExternalLink } from 'lucide-react';
+import {ExternalLink, Eye} from 'lucide-react';
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link';
 import { formatFirestoreDate } from '@/lib/utils';
+import { formatViews } from '@/lib/utils';
+import {formatDistanceToNow} from "date-fns";
 
 interface FundingEntry {
     fundingName: string
@@ -42,9 +44,22 @@ interface UserData {
     gender: string
 }
 
+interface Post {
+    id: string;
+    title: string;
+    excerpt: string;
+    coverImageUrl: string;
+    createdAt: any;
+    views: number;
+    category: string;
+    userId: string;
+}
+
 const OrganizationProfilePage = () => {
     const [userData, setUserData] = useState<UserData>();
+    const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
+    const [postsLoading, setPostsLoading] = useState(true);
     const router = useRouter();
     const { userId } = useParams();
 
@@ -68,22 +83,37 @@ const OrganizationProfilePage = () => {
             }
         };
 
+        const fetchPosts = async () => {
+            if (!userId) return;
+
+            try {
+                const postsRef = collection(db, "posts");
+                const q = query(postsRef, where("userId", "==", userId as string),where("isVisible", "==", true));
+                const querySnapshot = await getDocs(q);
+
+                const postsData: Post[] = [];
+                querySnapshot.forEach((doc) => {
+                    postsData.push({ id: doc.id, ...doc.data() } as Post);
+                });
+
+                setPosts(postsData);
+            } catch (error) {
+                console.error("Error fetching posts:", error);
+            } finally {
+                setPostsLoading(false);
+            }
+        };
+
         fetchUserData();
+        fetchPosts();
     }, [userId]);
 
     const isFunded = userData?.fundingStage === 'Funding' ? "Yes" : "No";
 
     if (loading) {
         return (
-             <div className="flex items-center flex-center h-screen text-[#2e2e2e] gap-4 text-2xl font-bold">
-                <Image
-                    src="/icons/loader.svg"
-                    alt="loader"
-                    width={48}
-                    height={48}
-                    className="animate-spin"
-                />
-                Loading ...
+            <div className="min-h-screen bg-primary-200 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
             </div>
     );
     }
@@ -233,6 +263,73 @@ const OrganizationProfilePage = () => {
                         ))}
                     </div>
                 </div>
+                )}
+                {/* Posts Section */}
+                {posts.length > 0 && (
+                    <div className="my-10">
+                        <h2 className="font-bold text-2xl mb-4">Posts</h2>
+
+                        {postsLoading ? (
+                            <div className="flex items-center gap-4 text-lg font-medium">
+                                <Image
+                                    src="/icons/loader.svg"
+                                    alt="loader"
+                                    width={24}
+                                    height={24}
+                                    className="animate-spin"
+                                />
+                                Loading posts...
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {posts.map((post) => (
+                                    <div key={post.id} className="overflow-hidden border-0 h-fit shadow-sm hover:shadow-md transition-shadow duration-200 bg-white rounded-lg">
+                                        <Link href={`/posts/${post.id}`} className="block h-full">
+                                            <div className="relative">
+                                                {/* Responsive image height */}
+                                                <div className="relative border-secondary-200 h-48 sm:h-56 md:h-64">
+                                                    <img
+                                                        src={post.coverImageUrl || '/images/placeholder.jpg'}
+                                                        alt={post.title}
+                                                        className="object-cover w-full h-full"
+                                                        loading="lazy"
+                                                    />
+                                                </div>
+
+                                                <div className="p-4 h-full">
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <span className="text-sm font-bold text-primary-500">{post.category}</span>
+                                                        <span className="text-xs text-secondary-300">
+                                                        {post.createdAt?.toDate()
+                                                            ? formatDistanceToNow(post.createdAt.toDate(), { addSuffix: true })
+                                                            : "Recently"}
+                                                    </span>
+                                                    </div>
+
+                                                    <h3 className="font-bold mb-2 text-text-800 line-clamp-1 hover:underline text-lg">
+                                                        {post.title}
+                                                    </h3>
+
+                                                    {/* Subheading with proper line clamping */}
+                                                    <div className="hidden sm:block text-sm text-text-600 mb-3">
+                                                        <div className='line-clamp-1'>
+                                                            {post.excerpt}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Views count */}
+                                                    <div className="flex items-center text-xs text-secondary-400">
+                                                        <Eye className="h-3 w-3 mr-1" />
+                                                        <span>{formatViews(post.views)} views</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 )}
             </div>
         </div>

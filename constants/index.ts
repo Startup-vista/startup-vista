@@ -111,3 +111,12 @@ export const reportCategories = [
         description: "Any other issues not covered above — users can add their own reason."
     }
 ];
+
+export interface User {
+    uid: string;
+    companyName: string;
+    companyEmail: string;
+    industry: string;
+    isVerified: boolean;
+    isPremium: boolean;
+}

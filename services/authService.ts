@@ -3,18 +3,12 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     UserCredential,
-    updateProfile,
     signOut
 } from "firebase/auth";
 import {
     doc,
     setDoc,
     getDoc,
-    updateDoc,
-    collection,
-    query,
-    where,
-    getDocs
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { FirebaseError } from "firebase/app";
@@ -74,7 +68,7 @@ export const authService = {
             const cleanUserData = Object.fromEntries(
                 Object.entries(userData).filter(([_, value]) => value !== undefined)
             );
-    
+
             // 4. Create user document in Firestore
             const userDoc: UserDocument = {
                 uid: userCredential.user.uid,
@@ -136,13 +130,44 @@ export const authService = {
         }
     },
 
-    // Admin functions
-    async getAllUsers(): Promise<UserDocument[]> {
-        const querySnapshot = await getDocs(collection(db, "users"));
-        return querySnapshot.docs.map(doc => doc.data() as UserDocument);
-    },
-
-    async updateUserVerification(uid: string, isVerified: boolean): Promise<void> {
-        await updateDoc(doc(db, "users", uid), { isVerified });
-    }
 };
+
+
+export async function createAdminUser({
+                                          email,
+                                          password,
+                                          fullName,
+                                      }: {
+    email: string;
+    password: string;
+    fullName: string;
+}) {
+    const user: UserCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+    await setDoc(doc(db, "admins", user.user.uid), {
+        email,
+        fullName,
+        isAdmin: false,
+        isEditor: false,
+        isVerified: false,
+        createdAt: new Date(),
+    });
+
+    return user;
+}
+
+export async function checkAdminVerificationStatus(uid: string) {
+    const docRef = doc(db, "admins", uid);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+        throw new Error("User record not found");
+    }
+
+    const userData = docSnap.data();
+    if (!userData.isVerified) {
+        throw new Error("Not an admin user");
+    }
+
+    return userData.isVerified;
+}

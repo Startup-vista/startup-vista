@@ -226,3 +226,25 @@ export const UserFormValidation = z.object({
     z.string().min(1, "Password is required")
   )
 });
+
+
+export const adminSignupSchema = z.object({
+  email: z.string().email("Valid email required"),
+  password: z.string()
+      .min(8, "Password must be at least 8 characters")
+      .max(20, "Password must be at most 20 characters")
+      .refine(passwordValidation.hasUpperCase, "Password must contain at least one uppercase letter")
+      .refine(passwordValidation.hasLowerCase, "Password must contain at least one lowercase letter")
+      .refine(passwordValidation.hasNumber, "Password must contain at least one number")
+      .refine(passwordValidation.hasSpecialChar, "Password must contain at least one special character"),
+  confirmPassword: z.string(),
+  fullName: z.string().min(2, "Name must be at least 2 characters"),
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"]
+});
+
+export const adminLoginSchema = z.object({
+  email: z.string().email("Valid email required"),
+  password: z.string().min(1, "Password required"),
+});
