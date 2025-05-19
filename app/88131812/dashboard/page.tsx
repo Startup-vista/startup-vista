@@ -197,7 +197,7 @@ export default function AdminDashboard() {
 
             await addDoc(collection(db, "rejections"), rejectionData);
 
-            // // Delete user from authentication
+            // Delete user from authentication
             const user = auth.currentUser;
             if (user && user.email === rejectingUser.email) {
                 await deleteAuthUser(user);

@@ -88,7 +88,7 @@ const OrganizationProfilePage = () => {
 
             try {
                 const postsRef = collection(db, "posts");
-                const q = query(postsRef, where("userId", "==", userId as string));
+                const q = query(postsRef, where("userId", "==", userId as string),where("isVisible", "==", true));
                 const querySnapshot = await getDocs(q);
 
                 const postsData: Post[] = [];

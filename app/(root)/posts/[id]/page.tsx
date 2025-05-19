@@ -61,6 +61,11 @@ export default function BlogPostPage() {
 
                 if (postSnap.exists()) {
                     const postData = postSnap.data();
+
+                    if (!postData.isVisible) {
+                       router.push("/not-found");
+                    }
+
                     getUserData(postData.userId);
 
                     // Update the post in state

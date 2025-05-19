@@ -3,9 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Card } from './ui/card';
 import { ArrowRight, Eye } from 'lucide-react';
-import Image from 'next/image';
 import {formatViews} from "@/lib/utils";
-import {formatDistanceToNow} from "date-fns";
 
 interface CardItem {
   id: string;
@@ -41,7 +39,7 @@ const ContentSection: React.FC<ContentSectionProps> = ({ title, cards, viewMoreU
           )}
         </div>
 
-        {hasAnyContent ? (
+        {hasAnyContent && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {cards.length >= 1 && (
                   <div className="sm:col-span-2 lg:col-span-3">
@@ -58,13 +56,6 @@ const ContentSection: React.FC<ContentSectionProps> = ({ title, cards, viewMoreU
                     <CardItem card={card} />
                   </div>
               ))}
-            </div>
-        ) : (
-            <div className="flex flex-col justify-center items-center py-12 px-4">
-              <Image src="/images/nodata.png" width={150} height={150} alt='no data' />
-              <div className="max-w-md border-0">
-                <p className='text-text-800 pl-8 font-semibold text-lg'>There are currently no articles in this section.</p>
-              </div>
             </div>
         )}
       </div>

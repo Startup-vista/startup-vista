@@ -5,6 +5,7 @@ import ContentSection from '@/components/ContentSection';
 import AdContainer from '@/components/AdContainer';
 import {collection, getDocs, query, orderBy, limit, where, getDoc, doc} from 'firebase/firestore';
 import { db } from '@/firebase';
+import Image from 'next/image';
 import {formatDistanceToNow} from "date-fns";
 
 
@@ -34,6 +35,7 @@ interface Section {
 export default function HomePage() {
   const [sections, setSections] = useState<Section[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hasPosts, setHasPosts] = useState(false);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -48,6 +50,7 @@ export default function HomePage() {
             title: "Trending News",
             query: query(
                 postsRef,
+                where("isVisible", "==", true),
                 orderBy("views", "desc"),
                 limit(8)
             ),
@@ -58,6 +61,7 @@ export default function HomePage() {
             title: "Funding",
             query: query(
                 postsRef,
+                where("isVisible", "==", true),
                 where("category", "==", "Funding"),
                 orderBy("createdAt", "desc"),
                 limit(8)
@@ -69,6 +73,7 @@ export default function HomePage() {
             title: "Finance Insights",
             query: query(
                 postsRef,
+                where("isVisible", "==", true),
                 where("category", "==", "Finance"),
                 orderBy("createdAt", "desc"),
                 limit(8)
@@ -80,6 +85,7 @@ export default function HomePage() {
             title: "Market Trends",
             query: query(
                 postsRef,
+                where("isVisible", "==", true),
                 where("category", "==", "Market Trends"),
                 orderBy("createdAt", "desc"),
                 limit(8)
@@ -91,6 +97,7 @@ export default function HomePage() {
             title: "Founder Stories",
             query: query(
                 postsRef,
+                where("isVisible", "==", true),
                 where("category", "==", "Founder Story"),
                 orderBy("createdAt", "desc"),
                 limit(8)
@@ -102,6 +109,7 @@ export default function HomePage() {
             title: "In-depth Analysis",
             query: query(
                 postsRef,
+                where("isVisible", "==", true),
                 where("category", "==", "In depth"),
                 orderBy("createdAt", "desc"),
                 limit(8)
@@ -114,6 +122,11 @@ export default function HomePage() {
         const querySnapshots = await Promise.all(
             sectionQueries.map(section => getDocs(section.query))
         );
+
+        const totalPosts = querySnapshots.reduce(
+            (sum, snapshot) => sum + snapshot.docs.length, 0
+        );
+        setHasPosts(totalPosts > 0);
 
         // Get unique user IDs from all posts
         const userIds = Array.from(new Set(
@@ -158,10 +171,11 @@ export default function HomePage() {
           })
         }));
 
-
+        console.log(loadedSections);
         setSections(loadedSections);
       } catch (error) {
         console.error("Error fetching posts:", error);
+        setHasPosts(false);
       } finally {
         setLoading(false);
       }
@@ -174,6 +188,27 @@ export default function HomePage() {
     return (
         <div className="min-h-screen bg-primary-200 flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
+        </div>
+    );
+  }
+
+  if (!hasPosts) {
+    return (
+        <div className="min-h-screen bg-primary-200 flex flex-col justify-center items-center">
+          <div className="flex flex-col justify-center items-center py-12 px-4">
+            <Image
+                src="/images/nodata.png"
+                width={350}
+                height={350}
+                alt='No articles available'
+                className="mb-4"
+            />
+            <div className="max-w-md text-center">
+              <p className='text-text-800 font-semibold text-xl'>
+                There are currently no posts available.
+              </p>
+            </div>
+          </div>
         </div>
     );
   }
