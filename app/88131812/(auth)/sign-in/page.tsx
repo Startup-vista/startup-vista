@@ -44,7 +44,7 @@ export default function AdminLogin() {
                 throw new Error("Your admin account is not yet verified");
             }
 
-            router.push("/admin/dashboard");
+            router.push("/88131812/dashboard");
         } catch (error: any) {
             toast.error("Login failed", {
                 description: error.message,
@@ -82,22 +82,11 @@ export default function AdminLogin() {
                             fieldType={FormFieldType.PWD}
                         />
 
-                        <Button type="submit" className="w-full" disabled={isLoading}>
+                        <Button type="submit" className="w-full cursor-pointer" disabled={isLoading}>
                             {isLoading ? "Signing in..." : "Sign In"}
                         </Button>
                     </form>
                 </Form>
-
-                <div className="text-center text-sm text-gray-600">
-                    Don't have an account?{" "}
-                    <Button
-                        variant="link"
-                        className="p-0 text-blue-600"
-                        onClick={() => router.push("/admin/sign-up")}
-                    >
-                        Sign up
-                    </Button>
-                </div>
             </div>
         </div>
     );

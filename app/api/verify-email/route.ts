@@ -6,24 +6,24 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { email, status, brandName } = body;
+        const { email, status , brandName , reason} = body;
 
         // Send email based on the status
         const {  error } = await resend.emails.send({
             from: "StartupVista <notifications@startupvista.in>",
             to: email,
             subject: status === "verified"
-                ? "Your StartupVista Account Has Been Verified!"
-                : "Important Update About Your StartupVista Account",
-            html: generateStatusEmailHTML({ status, brandName }),
+                ? `You’re Approved — Welcome to StartupVista!`
+                :  `Update on Your StartupVista Application`,
+            html: generateStatusEmailHTML({ status, brandName , reason}),
         });
 
-        // Send notification to admin
+        // // Send notification to admin
         await resend.emails.send({
             from: "StartupVista <notifications@startupvista.in>",
             to: "startupvista09@gmail.com",
             subject: `${brandName} ${status.charAt(0).toUpperCase() + status.slice(1)}`,
-            html: generateAdminNotificationHTML({ email, status, brandName }),
+            html: generateAdminNotificationHTML({ email, status, brandName, reason }),
         });
 
         if (error) {
@@ -36,65 +36,85 @@ export async function POST(request: Request) {
     }
 }
 
-function generateStatusEmailHTML({ status, brandName }: any) {
+function generateStatusEmailHTML({ status, brandName , reason}: any) {
     const isVerified = status === "verified";
+
+    const formattedReason = reason
+        ? reason.replace(/\n/g, '<br>')
+        : 'Not provided';
 
     return `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333; line-height: 1.6;">
       <h1 style="color: #1C4BC6; margin-bottom: 20px;">Hi ${brandName},</h1>
       
-      ${isVerified ? `
-        <div style="background: #eef7ee; border-left: 4px solid #4caf50; padding: 12px 20px; margin-bottom: 20px;">
-          <h3 style="color: #2e7d32; margin: 0;">✅ Your account has been verified!</h3>
-        </div>
-        
+      ${isVerified ? `   
         <p style="margin-bottom: 20px;">
-          We're pleased to inform you that your StartupVista account${brandName ? ` for <strong>${brandName}</strong>` : ''} has been verified.
-          You now have full access to all features and benefits of our platform.
+            Great news — your account has been successfully verified on StartupVista!
+            You can now begin sharing your startup journey, product updates, funding news, hiring announcements, and much more — directly from your dashboard.
+            This is your space to build trust, visibility, and community around your brand — completely on your terms.
         </p>
         
         <p style="margin-bottom: 20px;">
-          Here's what you can do now:
+          Here's what to do next:
         </p>
         
         <ul style="margin-bottom: 30px; padding-left: 20px;">
-          <li>Access exclusive startup resources</li>
-          <li>Connect with investors and mentors</li>
-          <li>Participate in our community forums</li>
-          <li>Create and share your startup profile</li>
+          <li>Log in: https://www.startupvista.in/start-up/login</li>
+          <li>Post your first update: https://www.startupvista.in/start-up/create-post</li>
+          <li>Share your public profile link and build your startup’s presence!</li>
         </ul>
         
         <p style="margin-bottom: 30px;">
-          If you have any questions or need assistance, please don't hesitate to reach out to our support team.
+          If you need help or have any questions, feel free to reach out to us anytime.
+        </p>
+        
+        <p style="margin-bottom: 30px;">
+          Welcome aboard — let’s share your story with the world!
         </p>
       ` : `
-        <div style="background: #fff0f0; border-left: 4px solid #f44336; padding: 12px 20px; margin-bottom: 20px;">
-          <h3 style="color: #d32f2f; margin: 0;">Important update about your account</h3>
-        </div>
-        
         <p style="margin-bottom: 20px;">
-          We regret to inform you that we were unable to verify your StartupVista account${brandName ? ` for <strong>${brandName}</strong>` : ''} at this time.
+         Thank you for applying to join StartupVista — we truly appreciate your interest.
         </p>
         
         <p style="margin-bottom: 20px;">
-          There could be several reasons for this:
+          After reviewing your submission, we were unable to verify your startup profile at this time due to one or more of the following reasons:
         </p>
         
-        <ul style="margin-bottom: 20px; padding-left: 20px;">
-          <li>Incomplete or inaccurate information provided</li>
-          <li>Unable to verify company details</li>
-          <li>Your profile doesn't meet our current requirements</li>
+        <p style="margin-bottom: 20px;white-space: pre-wrap;">${formattedReason}</p>
+        
+        <p style="margin-bottom: 20px;">
+          We understand this might be disappointing, but we encourage you to re-apply after carefully reviewing and correcting the above.
+        </p>
+        
+        <p style="margin-bottom: 20px;">
+            To increase your chances of approval, please ensure:
+        </p>
+        
+        <ul style="margin-bottom: 30px; padding-left: 20px;">
+          <li>Your company name and email domain match public records or your website</li>
+          <li>All information is complete, accurate, and verifiable</li>
+          <li>You provide active links to your website and social media</li>
         </ul>
         
+        <p style="margin-bottom: 20px;">
+            Ready to reapply? Click here: Reapply on StartupVista
+            For any help, contact us at support@startupvista.in
+        </p>
+        
+        <p style="margin-bottom: 20px;">
+            Ready to reapply? Click here: 
+            <a href="https://www.startupvista.in/start-up/register" style="color: #1C4BC6; text-decoration: none;">Reapply on StartupVista</a>
+            For any help, contact us at support@startupvista.in
+        </p>
+        
         <p style="margin-bottom: 30px;">
-          If you believe this is an error or would like to provide additional information, please reply to this email
-          or contact our support team directly. We're happy to reconsider your application with updated information.
+            We're rooting for your journey and look forward to seeing you back!
         </p>
       `}
   
       <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
         <p style="margin: 5px 0;">
-          <strong>Thank you for choosing StartupVista,</strong>
+          <strong>Warm regards,</strong>
         </p>
         <p style="margin: 5px 0; color: #1C4BC6; font-weight: bold;">
           Team StartupVista
@@ -107,8 +127,11 @@ function generateStatusEmailHTML({ status, brandName }: any) {
   `;
 }
 
-function generateAdminNotificationHTML({ email, status, brandName }: any) {
+function generateAdminNotificationHTML({ email, status, brandName , reason}: any) {
     const isVerified = status === "verified";
+    const formattedReason = reason
+        ? reason.replace(/\n/g, '<br>')
+        : 'Not provided';
 
     return `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333; line-height: 1.6;">
@@ -139,6 +162,10 @@ function generateAdminNotificationHTML({ email, status, brandName }: any) {
           <td style="padding: 8px 0; border-bottom: 1px solid #eee; color: ${isVerified ? '#2e7d32' : '#d32f2f'}; font-weight: bold;">
             ${status.charAt(0).toUpperCase() + status.slice(1)}
           </td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold;">Reason for Rejection</td>
+          <td style="padding: 8px 0; border-bottom: 1px solid #eee;">${formattedReason}</td>
         </tr>
       </table>
       

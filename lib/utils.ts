@@ -16,6 +16,15 @@ export function formatFirestoreDate(timestamp: Timestamp) {
   return `${month}, ${year}`;
 }
 
+export function formatFirestoreDateAdmin(timestamp: Timestamp) {
+  if (!timestamp?.seconds) return "N/A";
+  const date = new Date(timestamp.seconds * 1000);
+  const day = date.toLocaleString('en-IN', { day: 'numeric' });
+  const month = date.toLocaleString('en-IN', { month: 'long' });
+  const year = date.getFullYear();
+  return ` ${day} ${month}, ${year}`;
+}
+
 export const formatViews = (views: number): string => {
   if (views >= 1000000) {
     return `${(views / 1000000).toFixed(1)}M`;

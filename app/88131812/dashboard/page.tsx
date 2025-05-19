@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { collection, query, getDocs, doc, updateDoc } from "firebase/firestore";
+import { collection, query, getDocs, doc, updateDoc, deleteDoc, addDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,8 +27,22 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {MoreHorizontal, Check, X, RefreshCw, Users, Shield, Cross} from "lucide-react";
+import {MoreHorizontal, Check, X, RefreshCw, Users, Shield} from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { deleteUser as deleteAuthUser } from "firebase/auth";
+import { auth } from "@/firebase";
 
 interface User {
     id: string;
@@ -47,12 +61,21 @@ interface AdminUser  {
     isEditor: boolean;
 }
 
+interface RejectionData extends Omit<User, 'id'> {
+    rejectedAt: Date;
+    reason: string;
+    originalId: string;
+}
+
 export default function AdminDashboard() {
     const [regularUsers, setRegularUsers] = useState<User[]>([]);
     const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [verifyingUser, setVerifyingUser] = useState<string | null>(null);
+    const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+    const [rejectingUser, setRejectingUser] = useState<User | null>(null);
+    const [rejectionReason, setRejectionReason] = useState("");
 
     const fetchUsers = async () => {
         try {
@@ -95,7 +118,7 @@ export default function AdminDashboard() {
         toast.success("User data has been refreshed");
     };
 
-    const sendVerificationEmail = async (email: string, status: string, brandName?: string) => {
+    const sendVerificationEmail = async (email: string, status: string, brandName?: string, reason?: string) => {
         try {
             const response = await fetch('/api/verify-email', {
                 method: 'POST',
@@ -105,7 +128,8 @@ export default function AdminDashboard() {
                 body: JSON.stringify({
                     email,
                     status,
-                    brandName: brandName
+                    brandName,
+                    reason
                 }),
             });
 
@@ -150,21 +174,48 @@ export default function AdminDashboard() {
         }
     };
 
-    const handleRejectUser = async (userId: string) => {
+    const openRejectDialog = (user: User) => {
+        setRejectingUser(user);
+        setRejectionReason("");
+        setRejectDialogOpen(true);
+    };
+
+    const handleRejectUser = async () => {
+        if (!rejectingUser) return;
+
         try {
-            // Find the user
-            const user = regularUsers.find(u => u.id === userId);
-            if (!user) {
-                throw new Error("User not found");
+            // Send rejection email with reason
+            await sendVerificationEmail(rejectingUser.email, "rejected", rejectingUser.brandName, rejectionReason);
+
+            // // Archive user data to rejections collection
+            const rejectionData: RejectionData = {
+                ...rejectingUser,
+                originalId: rejectingUser.id,
+                rejectedAt: new Date(),
+                reason: rejectionReason,
+            };
+
+            await addDoc(collection(db, "rejections"), rejectionData);
+
+            // // Delete user from authentication
+            const user = auth.currentUser;
+            if (user && user.email === rejectingUser.email) {
+                await deleteAuthUser(user);
             }
 
-            // Send rejection email
-            await sendVerificationEmail(user.email, "rejected", user.brandName);
+            // Delete user from firestore
+            await deleteDoc(doc(db, "users", rejectingUser.id));
 
-            toast.success("Rejection notification email sent");
+            // Update state
+            setRegularUsers(regularUsers.filter(u => u.id !== rejectingUser.id));
+
+            toast.success("User rejected and removed from system");
         } catch (error) {
             console.error("Error rejecting user:", error);
-            toast.error("Failed to send rejection email");
+            toast.error("Failed to reject user");
+        } finally {
+            setRejectDialogOpen(false);
+            setRejectingUser(null);
         }
     };
 
@@ -202,6 +253,7 @@ export default function AdminDashboard() {
                     variant="outline"
                     onClick={refreshData}
                     disabled={refreshing}
+                    className="cursor-pointer bg-primary-500 text-white"
                 >
                     <RefreshCw className={`h-4 w-4 mr-2 ${refreshing && "animate-spin"}`} />
                     Refresh
@@ -255,7 +307,9 @@ export default function AdminDashboard() {
                                             regularUsers.map((user) => (
                                                 <TableRow key={user.id}>
                                                     <TableCell>{user.email}</TableCell>
-                                                    <TableCell>{user.brandName || "-"}</TableCell>
+                                                    <Link href={`/88131812/company-details/${user.id}`}>
+                                                        <TableCell>{user.brandName || "-"}</TableCell>
+                                                    </Link>
                                                     <TableCell>
                                                         <Badge variant={user.isVerified ? "default" : "secondary"}>
                                                             {user.isVerified ? "Verified" : "Pending"}
@@ -270,6 +324,7 @@ export default function AdminDashboard() {
                                                                     variant="outline"
                                                                     onClick={() => handleVerifyUser(user.id)}
                                                                     disabled={verifyingUser === user.id}
+                                                                    className="cursor-pointer bg-primary-500 text-white"
                                                                 >
                                                                     {verifyingUser === user.id ? (
                                                                         <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
@@ -281,14 +336,15 @@ export default function AdminDashboard() {
                                                                 <Button
                                                                     size="sm"
                                                                     variant="outline"
-                                                                    onClick={() => handleRejectUser(user.id)}
+                                                                    onClick={() => openRejectDialog(user)}
+                                                                    className="cursor-pointer bg-red-500 text-white"
                                                                 >
                                                                     <X className="h-4 w-4 mr-2" />
                                                                     Reject
                                                                 </Button>
                                                             </div>
                                                         ) : (
-                                                            <Badge variant="outline" className="bg-green-50">Verified</Badge>
+                                                            <Badge variant="outline" className="bg-green-700 text-white">Verified</Badge>
                                                         )}
                                                     </TableCell>
                                                 </TableRow>
@@ -380,6 +436,39 @@ export default function AdminDashboard() {
                     </Card>
                 </TabsContent>
             </Tabs>
+
+            {/* Rejection Dialog */}
+            <AlertDialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+                <AlertDialogContent className="bg-white">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Reject User</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Please provide a reason for rejecting this user. This will be sent to the user and the account will be deleted.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="flex flex-col items-center gap-4">
+                            <Textarea
+                                id="reason"
+                                value={rejectionReason}
+                                onChange={(e) => setRejectionReason(e.target.value)}
+                                className="col-span-3"
+                                placeholder="Enter the reason for rejection..."
+                            />
+                        </div>
+                    </div>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleRejectUser}
+                            disabled={!rejectionReason.trim()}
+                            className="bg-red-600 hover:bg-red-700 text-white cursor-pointer"
+                        >
+                            Confirm Rejection
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

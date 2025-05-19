@@ -89,7 +89,7 @@ const FileUploader = ({ files, onChange, accept, fileType }: FileUploaderProps) 
                             <p className="text-sm leading-4.5 font-normal">
                                 <span className="text-primary-500">Click to upload</span> or drag and drop
                             </p>
-                            <p className="text-xs text-secondary-300">PNG, JPG, JPEG up to 5MB</p>
+                            <p className="text-xs text-secondary-100">Use white background and size 500 × 500 px</p>
                         </div>
                     </>
                 );
