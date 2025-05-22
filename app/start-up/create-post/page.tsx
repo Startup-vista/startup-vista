@@ -29,11 +29,12 @@ const ReactQuill = dynamic(() => import('react-quill-new'), {
 
 type PostData = {
     title: string;
-    excerpt: string;
+    summary: string;
     content: any;
     coverImageUrl: string;
     category: string;
     tags: string[];
+    isVisible: boolean;
     userId: string;
     createdAt: any;
     updatedAt: any;
@@ -42,7 +43,7 @@ type PostData = {
 export default function EditorPage() {
     const router = useRouter();
     const [title, setTitle] = useState("");
-    const [excerpt, setExcerpt] = useState("");
+    const [summary, setSummary] = useState("");
     const [content, setContent] = useState("");
     const [coverImage, setCoverImage] = useState<File[]>([]);
     const [category, setCategory] = useState("");
@@ -54,7 +55,7 @@ export default function EditorPage() {
     const [userId, setUserId] = useState<string | null>(null);
     const [errors, setErrors] = useState({
         title: false,
-        excerpt: false,
+        summary: false,
         coverImage: false,
         category: false
     });
@@ -88,7 +89,7 @@ export default function EditorPage() {
     const validateForm = () => {
         const newErrors = {
             title: !title.trim(),
-            excerpt: !excerpt.trim(),
+            summary: !summary.trim(),
             coverImage: coverImage.length === 0,
             category: !category.trim()
         };
@@ -187,12 +188,13 @@ export default function EditorPage() {
             // Prepare post data
             const postData: PostData = {
                 title,
-                excerpt,
+                summary,
                 content: processedContent,
                 coverImageUrl,
                 userId: userId as string,
                 category: category,
                 tags: tags,
+                isVisible: false,
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
             };
@@ -276,20 +278,20 @@ export default function EditorPage() {
               </div>
 
               <div className="space-y-2">
-                  <Label htmlFor="excerpt" className="text-text-800">
+                  <Label htmlFor="summary" className="text-text-800">
                       Summary *
                   </Label>
                   <Textarea
-                      id="excerpt"
-                      value={excerpt}
+                      id="summary"
+                      value={summary}
                       onChange={(e) => {
-                          setExcerpt(e.target.value);
-                          setErrors(prev => ({...prev, excerpt: false}));
+                          setSummary(e.target.value);
+                          setErrors(prev => ({...prev, summary: false}));
                       }}
                       placeholder="A short description of your post"
-                      className={`shad-textArea min-h-[100px] ${errors.excerpt ? 'border-red-500' : ''}`}
+                      className={`shad-textArea min-h-[100px] ${errors.summary ? 'border-red-500' : ''}`}
                   />
-                  {errors.excerpt && <p className="text-xs text-red-500">Summary is required</p>}
+                  {errors.summary && <p className="text-xs text-red-500">Summary is required</p>}
               </div>
               <div className="space-y-2">
                   <Label htmlFor="category" className="text-text-800">

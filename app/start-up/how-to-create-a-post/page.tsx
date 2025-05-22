@@ -45,15 +45,8 @@ export default function ArticleGuidePage() {
 
     if (loadingAuth) {
         return (
-            <div className="flex items-center flex-center h-screen text-[#2e2e2e] gap-4 text-2xl font-bold">
-                <Image
-                    src="/icons/loader.svg"
-                    alt="loader"
-                    width={48}
-                    height={48}
-                    className="animate-spin"
-                />
-                Loading ...
+            <div className="min-h-screen bg-primary-200 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
             </div>
         );
     }
@@ -68,7 +61,7 @@ export default function ArticleGuidePage() {
             <div className="container mx-auto px-4 py-12 max-w-4xl">
                 {/* Title Section */}
                 <div className="items-center justify-center w-fit mb-12">
-                    <h1 className="text-3xl md:text-5xl font-bold text-text-800">🚀 Step-by-Step Guide to Create Articles for StartupVista</h1>
+                    <h1 className="text-3xl md:text-5xl font-bold text-text-800">Step-by-Step Guide to Create Articles for StartupVista</h1>
                 </div>
 
                 {/* Introduction */}
@@ -112,7 +105,7 @@ export default function ArticleGuidePage() {
                     <div className="space-y-6 text-[#2E2E2E] pt-6">
                         <Card className="p-6 border-[#CEE0F6] bg-white">
                             <ul className="list-disc pl-6 space-y-2">
-                                <li>Click on "New Chat"</li>
+                                <li>Click on &#34;New Chat&#34;</li>
                                 <li>This will open a fresh conversation where you can feed your data</li>
                             </ul>
                             <Image
@@ -157,11 +150,27 @@ export default function ArticleGuidePage() {
                     <div className="space-y-6 text-[#2E2E2E] pt-6">
                         <Card className="p-6 border-[#CEE0F6] bg-white">
                             <ul className="list-disc pl-6 space-y-2">
-                                <li>Drag and drop OR use "Upload File" in ChatGPT (bottom of the prompt bar)</li>
+                                <li>Drag and drop OR use &#34;Upload File&#34; in ChatGPT (bottom of the prompt bar)</li>
                                 <li>After uploading, copy and paste this special prompt:</li>
                             </ul>
                             <div className="mt-4 p-4 bg-gray-800 text-white rounded-lg font-mono text-sm">
-                                "Save all the information provided in this conversation as structured data, including company name, industry, description, and key details for future reference when creating articles."
+                                &#34;Save all the information provided in this conversation as structured data, including:
+                                •	Company basics (name, founding date, mission).
+                                •	Founder background and story highlights.
+                                •	Product details, tech stack, and competitive advantages.
+                                •	Traction metrics, funding, and market positioning.
+                                For future requests, use this saved data to:
+                                1.	Auto-generate articles in any requested format (news, deep-dive, founder profile, etc.).
+                                2.	Maintain consistency: Reuse facts/quotes without repetition.
+                                3.	Adapt to tone/style: Apply journalistic, analytical, or inspirational tones on demand.
+                                4.	Optimize for SEO: Naturally integrate keywords like [Company Name], [Industry], [Founder Name], and [Core Product USP].
+                                Next time I ask, start with:
+                                I recall [Company Name] is a [Industry] startup solving [Problem]. Need an article? Specify:
+                                •	Type (e.g., funding announcement, founder interview).
+                                •	Tone (e.g., professional, storytelling).
+                                •	Focus (e.g., tech innovation, market trends).
+                                •	Word count (e.g., 500-800 words).
+                                I’ll draft a unique, fact-checked piece using saved details.&#34;
                             </div>
                             <Image
                                 src="/images/article-guide-4.png"
@@ -237,7 +246,14 @@ export default function ArticleGuidePage() {
                                 <li>Then paste this article-generation prompt:</li>
                             </ul>
                             <div className="mt-4 p-4 bg-gray-800 text-white rounded-lg font-mono text-sm">
-                                "Using the information provided above, write a well-structured, engaging article under the category of [insert category]. The article should be SEO-friendly, approximately 800-1000 words, with an attention-grabbing headline, clear sections with subheadings, and a compelling conclusion. Include relevant statistics or examples where appropriate."
+                                &#34;Using the information provided above, write a well-structured, engaging article under the category of [insert category: Funding / Finance / Market Trends / Founder Story / In-Depth / Daily News].
+                                Ensure the tone matches [insert tone: journalistic, analytical, conversational, inspiring, etc.], and cover all the important aspects including key facts, quotes, and context. Start with a compelling introduction or hook, and conclude with relevant insights, implications, or future outlook & Give me hooked tittle & summary of 2 lines as well.
+                                Keep it between [insert word count: 500-800 / 800-1200 words] and make sure it&#39;s informative, fact-checked, and ready for publication.&#34;
+                                Optional Add-ons (You can toggle in your form):
+                                •	“Include bullet points or key takeaways at the end.”
+                                •	“Add a summary paragraph at the beginning.”
+                                •	“Make it SEO-friendly with keywords like [insert keywords].”
+                                •	“Write in a first-person/third-person narrative depending on context.”
                             </div>
                             <Image
                                 src="/images/article-guide-7.png"
@@ -261,13 +277,6 @@ export default function ArticleGuidePage() {
                                 <li>Create visuals if needed (for social media or StartupVista images)</li>
                                 <li>Post your article on StartupVista</li>
                             </ul>
-                            <Image
-                                src="/images/article-guide-8.png"
-                                alt="ChatGPT Login Example"
-                                width={600}
-                                height={400}
-                                className="mt-4 w-full rounded-lg border border-gray-200"
-                            />
                         </Card>
                     </div>
                 </section>

@@ -480,14 +480,14 @@ const RegisterForm = () => {
                         control={form.control}
                         name="linkedin"
                         label="LinkedIn*"
-                        placeholder="Enter your LinkedIn link"
+                        placeholder="https://www.linkedin.com/[your company link]"
                     />
                     <CustomFormField
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
                         name="instagram"
-                        label="Instagram*"
-                        placeholder="Enter your Instagram link"
+                        label="Instagram"
+                        placeholder="https://www.instagram.com/[your company link]"
                     />
                 </div>
                 <div className="flex flex-col gap-6 xl:flex-row">
@@ -495,15 +495,15 @@ const RegisterForm = () => {
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
                         name="x"
-                        label="X*"
-                        placeholder="Enter your X link"
+                        label="X"
+                        placeholder="https://www.x.com/[your company link]"
                     />
                     <CustomFormField
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
                         name="facebook"
-                        label="FaceBook*"
-                        placeholder="Enter your FaceBook link"
+                        label="FaceBook"
+                        placeholder="https://www.facebook.com/[your company link]"
                     />
                 </div>
 
