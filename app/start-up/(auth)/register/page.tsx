@@ -48,7 +48,7 @@ const Register = () => {
                     ) :
                         (
                             <Alert className='bg-white text-lg font-bold text-primary-500'>
-                                <AlertTitle>{`${userCount + 10} founders already claimed their spotlight — your turn.`}</AlertTitle>
+                                <AlertTitle>{`${userCount + 20} founders already claimed their spotlight — your turn.`}</AlertTitle>
                             </Alert>
                         )}
                     <RegisterForm />
