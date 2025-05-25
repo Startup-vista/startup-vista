@@ -17,7 +17,6 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import {auth, db, storage} from "@/firebase";
 import {processEditorImages} from "@/lib/utils";
 import {onAuthStateChanged} from "firebase/auth";
-import Image from "next/image";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {PostCategory} from "@/constants";
 import Link from "next/link";
@@ -194,7 +193,7 @@ export default function EditorPage() {
                 userId: userId as string,
                 category: category,
                 tags: tags,
-                isVisible: false,
+                isVisible: true,
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
             };
@@ -236,23 +235,42 @@ export default function EditorPage() {
       <Separator className="mb-8 border-secondary-200" />
 
         {/* New Guide Card */}
-        <Card className="mb-8 border-2 border-primary-500 bg-gradient-to-r from-[#243799] to-[#1C4BC6] hover:shadow-lg transition-all duration-300">
-            <CardContent className="p-1 px-5">
-                <div className="flex flex-col md:flex-row items-center gap-6">
-                    <div className="flex-1">
-                        <h3 className="text-2xl font-bold text-white mb-2">Need Help Creating Your Article?</h3>
-                        <p className="text-white mb-4">
-                            Use our step-by-step guide to craft perfect posts with ChatGPT!
-                        </p>
+        <div className="flex flex-row gap-4 w-full">
+            <Card className="mb-8 border-2 border-primary-500 bg-gradient-to-r from-[#243799] to-[#1C4BC6] hover:shadow-lg transition-all duration-300">
+                <CardContent className="p-1 px-5">
+                    <div className="flex flex-col md:flex-row items-center gap-6">
+                        <div className="flex-1">
+                            <h3 className="text-2xl font-bold text-white mb-2">Need Help Creating Your Posts ?</h3>
+                            <p className="text-white mb-4">
+                                Use our step-by-step guide to craft perfect posts with ChatGPT!
+                            </p>
+                        </div>
+                        <Button asChild className="bg-primary-600 hover:bg-primary-700 border border-white text-white px-6 py-3 whitespace-nowrap">
+                            <Link href="/start-up/how-to-create-a-post">
+                                View Complete Guide <ArrowRightIcon className="ml-2 h-4 w-4" />
+                            </Link>
+                        </Button>
                     </div>
-                    <Button asChild className="bg-primary-600 hover:bg-primary-700 border border-white text-white px-6 py-3 whitespace-nowrap">
-                        <Link href="/start-up/how-to-create-a-post">
-                            View Complete Guide <ArrowRightIcon className="ml-2 h-4 w-4" />
-                        </Link>
-                    </Button>
-                </div>
-            </CardContent>
-        </Card>
+                </CardContent>
+            </Card>
+            <Card className="mb-8 border-2 border-orange-700 bg-gradient-to-r from-orange-800 to-orange-600 hover:shadow-lg transition-all duration-300">
+                <CardContent className="p-1 px-5">
+                    <div className="flex flex-col md:flex-row items-center gap-6">
+                        <div className="flex-1">
+                            <h3 className="text-2xl font-bold text-white mb-2">Need Help Finding Your Category ?</h3>
+                            <p className="text-white mb-4">
+                                Use our step-by-step guide to find the appropriate category for your post!
+                            </p>
+                        </div>
+                        <Button asChild className="bg-primary-600 hover:bg-primary-700 border border-white text-white px-6 py-3 whitespace-nowrap">
+                            <Link href="/start-up/category-guide">
+                                View Complete Guide <ArrowRightIcon className="ml-2 h-4 w-4" />
+                            </Link>
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         <Card className="border-secondary-200">

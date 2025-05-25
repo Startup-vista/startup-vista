@@ -302,7 +302,7 @@ export default function ArticleGuidePage() {
                 {/* CTA */}
                 <section className="text-center py-8">
                     <Button size="lg" className="bg-[#1C4BC6] hover:bg-[#0D3AAB] text-white">
-                        <Link href="/start-up/create-post">Start Creating Your Article Now</Link>
+                        <Link href="/start-up/create-post">Start Creating Your Post Now</Link>
                     </Button>
                 </section>
             </div>
